@@ -142,11 +142,11 @@ const ApplicationDrawer = ({
     } else {
       return (
         <List>
-          <ListItem button={true}>
+          <ListItem button={true} onClick={onBackButtonClick}>
             <ListItemIcon>
               <ArrowBackIcon/>
             </ListItemIcon>
-            <ListItemText primary={'返回'} onClick={onBackButtonClick}/>
+            <ListItemText primary={'返回'}/>
           </ListItem>
         </List>
       );

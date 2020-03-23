@@ -60,6 +60,7 @@ const User: UserType = {
         yield put({
           type:"reset"
         })
+        router.push("/user/login")
         return
       }
       const claims = decodeJwtSign(userToken)

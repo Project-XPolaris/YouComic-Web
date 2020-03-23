@@ -10,6 +10,7 @@ import { LayoutModelStateType } from '@/models/layout';
 import { UserStateType } from '@/models/user';
 import ApplicationDrawerCollection from '@/layouts/components/ApplicationDrawer/collection';
 import AppsIcon from '@material-ui/icons/Apps';
+import { formatMessage } from 'umi/locale';
 
 const drawerWidth = 240;
 
@@ -62,7 +63,7 @@ const ApplicationDrawer = ({
   // @ts-ignore
   const items: DrawerNavigationItem[] = [
     {
-      title: '主页',
+      title:  formatMessage({id:"nav.home"}),
       link: '/',
       icon: <HomeIcon/>,
       needLogin:false

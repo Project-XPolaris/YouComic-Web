@@ -20,6 +20,7 @@ import SearchBar from '@/layouts/components/ApplicationHeaderBar/components/Sear
 import { Moment } from 'moment';
 import SearchBooksToolBar from '@/layouts/components/ApplicationHeaderBar/components/SearchBooksToolBar';
 import SearchTagsToolBar from '@/layouts/components/ApplicationHeaderBar/components/SearchTagsToolBar';
+import LocalSelect from '@/layouts/components/ApplicationHeaderBar/components/LocalSelect';
 
 const drawerWidth = 240;
 
@@ -169,8 +170,7 @@ const ApplicationHeaderBar = ({ child, location, isDrawerOpen, onSwitchDrawer, u
 
           </IconButton> : <Button color="inherit" onClick={onLoginClick}>Login</Button>
           }
-
-
+          <LocalSelect/>
         </Toolbar>
         {renderBooksFilter()}
         {location.pathname.match(/\/search\/.*?\/books$/) && <SearchBooksToolBar dispatch={dispatch} />}

@@ -5,8 +5,8 @@ const config: IConfig = {
   treeShaking: true,
   routes: [
     {
-      path:"/user/login",
-      component: "../pages/user/login/index"
+      path: '/user/login',
+      component: '../pages/user/login/index',
     },
     {
       path: '/',
@@ -34,7 +34,14 @@ const config: IConfig = {
       dynamicImport: { webpackChunkName: true },
       title: 'web',
       dll: true,
-
+      locale: {
+        // default false
+        enable: true,
+        // default zh-CN
+        default: 'zh-CN',
+        // default true, when it is true, will use `navigator.language` overwrite default
+        baseNavigator: true,
+      },
       routes: {
         exclude: [
           /models\//,

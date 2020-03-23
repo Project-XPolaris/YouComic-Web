@@ -7,12 +7,12 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Avatar, CssBaseline } from '@material-ui/core';
+import { Avatar, CssBaseline, withWidth,isWidthDown } from '@material-ui/core';
 import ApplicationDrawer from '@/layouts/components/ApplicationDrawer';
 import { UserStateType } from '@/models/user';
 import { blue } from '@material-ui/core/colors';
 import UserCard from '@/layouts/components/UserCardPopover/UserCard';
-import { Dispatch } from 'dva';
+import { connect, Dispatch } from 'dva';
 import router from 'umi/router';
 import BooksTool from '@/layouts/components/ApplicationHeaderBar/components/BooksTool';
 import SearchInput from '@/layouts/components/SearchInput';
@@ -21,6 +21,8 @@ import { Moment } from 'moment';
 import SearchBooksToolBar from '@/layouts/components/ApplicationHeaderBar/components/SearchBooksToolBar';
 import SearchTagsToolBar from '@/layouts/components/ApplicationHeaderBar/components/SearchTagsToolBar';
 import LocalSelect from '@/layouts/components/ApplicationHeaderBar/components/LocalSelect';
+import { ConnectType } from '@/global/connect';
+import { LayoutModelStateType } from '@/models/layout';
 
 const drawerWidth = 240;
 
@@ -34,8 +36,8 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: theme.spacing(2),
     },
     title: {
-      [theme.breakpoints.down('md')]:{
-        display: "none"
+      [theme.breakpoints.down('md')]: {
+        display: 'none',
       },
       flexGrow: 1,
     },
@@ -60,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) =>
         duration: theme.transitions.duration.leavingScreen,
       }),
       marginLeft: -drawerWidth,
-      minHeight:"100vh"
+      minHeight: '100vh',
     },
     contentShift: {
       transition: theme.transitions.create('margin', {
@@ -76,9 +78,23 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const ApplicationHeaderBar = ({ child, location, isDrawerOpen, onSwitchDrawer, user, dispatch }: { dispatch: Dispatch, user: UserStateType, child: any, location: any, isDrawerOpen: boolean, onSwitchDrawer: () => void }) => {
+interface ApplicationHeaderBar {
+  dispatch: Dispatch,
+  user: UserStateType,
+  child: any,
+  location: any,
+  layout:LayoutModelStateType,
+  width:any
+}
+
+const ApplicationHeaderBar = (
+  {
+    child, location, user, dispatch,layout,width
+  }: ApplicationHeaderBar,
+) => {
   const classes = useStyles();
-  const onMenuButtonClick = () => onSwitchDrawer();
+  const {isDrawerOpen} = layout
+  const onMenuButtonClick = () => switchDrawer();
   const { nickname } = user;
   const [userMenuAnchor, setUserMenuAnchor] = useState<HTMLElement | null>(null);
   const onUserCardClose = () => {
@@ -88,9 +104,17 @@ const ApplicationHeaderBar = ({ child, location, isDrawerOpen, onSwitchDrawer, u
     setUserMenuAnchor(e.currentTarget);
   };
   const onUserLogout = () => {
-    setUserMenuAnchor(null)
+    setUserMenuAnchor(null);
     dispatch({
       type: 'user/logout',
+    });
+  };
+  const switchDrawer = () => {
+    dispatch({
+      type: 'layout/setDrawerOpen',
+      payload: {
+        open: !layout.isDrawerOpen,
+      },
     });
   };
   const onLoginClick = () => {
@@ -138,11 +162,25 @@ const ApplicationHeaderBar = ({ child, location, isDrawerOpen, onSwitchDrawer, u
       );
     }
   };
+  const getAppBarClasses = () => {
+    if (isWidthDown("md",width)){
+      return classes.appBar
+    }else{
+      return clsx(classes.appBar, { [classes.appBarShift]: isDrawerOpen })
+    }
+  }
+  const getContentClasses = () => {
+    if (isWidthDown("md",width)){
+      return classes.contentShift
+    }else{
+      return clsx(classes.content, { [classes.contentShift]: isDrawerOpen })
+    }
+  }
   return (
 
     <div className={classes.root}>
       <CssBaseline/>
-      <AppBar className={clsx(classes.appBar, { [classes.appBarShift]: isDrawerOpen })} elevation={0}>
+      <AppBar className={getAppBarClasses()} elevation={0}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -173,15 +211,15 @@ const ApplicationHeaderBar = ({ child, location, isDrawerOpen, onSwitchDrawer, u
           <LocalSelect/>
         </Toolbar>
         {renderBooksFilter()}
-        {location.pathname.match(/\/search\/.*?\/books$/) && <SearchBooksToolBar dispatch={dispatch} />}
-        {location.pathname.match(/\/search\/.*?\/tags$/) && <SearchTagsToolBar dispatch={dispatch} />}
+        {location.pathname.match(/\/search\/.*?\/books$/) && <SearchBooksToolBar dispatch={dispatch}/>}
+        {location.pathname.match(/\/search\/.*?\/tags$/) && <SearchTagsToolBar dispatch={dispatch}/>}
       </AppBar>
       <ApplicationDrawer isOpen={isDrawerOpen} location={location}/>
-      <main className={clsx(classes.content, { [classes.contentShift]: isDrawerOpen })}>
+      <main className={getContentClasses()}>
         {child}
       </main>
     </div>
   );
 };
 
-export default ApplicationHeaderBar;
+export default connect(({ layout, user }: ConnectType) => ({ layout, user }))(withWidth()(ApplicationHeaderBar));

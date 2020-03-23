@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, useTheme } from '@material-ui/core';
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  makeStyles,
+  useTheme, withWidth, isWidthDown,
+} from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
 import router from 'umi/router';
 import FavoriteIcon from '@material-ui/icons/Favorite';
@@ -10,6 +18,7 @@ import { LayoutModelStateType } from '@/models/layout';
 import { UserStateType } from '@/models/user';
 import ApplicationDrawerCollection from '@/layouts/components/ApplicationDrawer/collection';
 import AppsIcon from '@material-ui/icons/Apps';
+// @ts-ignore
 import { formatMessage } from 'umi/locale';
 
 const drawerWidth = 240;
@@ -41,7 +50,7 @@ interface DrawerNavigationItem {
   link: string
   icon: any
   onClickItem?: () => void,
-  needLogin:boolean
+  needLogin: boolean
 }
 
 interface CollectionListI {
@@ -55,24 +64,26 @@ const ApplicationDrawer = ({
                              layout,
                              user,
                              location,
+                             width,
                              ...props
                            }: ApplicationDrawerPropsType) => {
   const classes = useStyles();
   const theme = useTheme();
   const { drawerMode } = layout;
+  console.log(width);
   // @ts-ignore
   const items: DrawerNavigationItem[] = [
     {
-      title:  formatMessage({id:"nav.home"}),
+      title: formatMessage({ id: 'nav.home' }),
       link: '/',
       icon: <HomeIcon/>,
-      needLogin:false
+      needLogin: false,
     },
     {
       title: '书籍列表',
       link: '/books',
       icon: <AppsIcon/>,
-      needLogin:false
+      needLogin: false,
     },
     {
       title: '收藏夹',
@@ -107,7 +118,7 @@ const ApplicationDrawer = ({
   const renderNavigationItems = () => {
     const navs = items.map(item => {
       if (item.needLogin && !user.id) {
-        return undefined
+        return undefined;
       }
       const onNavigationItemClick = () => router.push(item.link);
       return (
@@ -153,17 +164,25 @@ const ApplicationDrawer = ({
       );
     }
   };
-
+  const switchDrawer = () => {
+    dispatch({
+      type: 'layout/setDrawerOpen',
+      payload: {
+        open: !layout.isDrawerOpen,
+      },
+    });
+  };
   return (
     <div>
       <Drawer
         className={classes.drawer}
-        variant="persistent"
+        variant={isWidthDown('md', width) ? 'temporary' : 'persistent'}
         anchor="left"
         open={isOpen}
         classes={{
           paper: classes.drawerPaper,
         }}
+        onClose={isWidthDown('md', width) ? switchDrawer : undefined}
       >
         <div className={classes.drawerHeader}>
           {renderDrawerHeader()}
@@ -174,4 +193,4 @@ const ApplicationDrawer = ({
   );
 };
 
-export default connect(({ layout, user }: ConnectType) => ({ layout, user }))(ApplicationDrawer);
+export default connect(({ layout, user }: ConnectType) => ({ layout, user }))(withWidth()(ApplicationDrawer));

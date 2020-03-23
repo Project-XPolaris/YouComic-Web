@@ -73,10 +73,6 @@ const BasicLayout = ({
         <ApplicationHeaderBar
           child={content}
           location={location}
-          isDrawerOpen={isDrawerOpen}
-          onSwitchDrawer={switchDrawer}
-          user={user}
-          dispatch={dispatch}
         />
       </MuiPickersUtilsProvider>
     </ThemeProvider>

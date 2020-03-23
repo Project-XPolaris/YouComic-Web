@@ -28,7 +28,7 @@ export default function TagCollection({ title, tags = [] ,onShowMoreTag}: TagCol
       <div className={classes.titleWrap}>
         <Box className={classes.title}>{title}</Box>
       </div>
-        {onShowMoreTag !== undefined && <Button variant={'contained'} disableElevation={true} color={'primary'} onClick={onShowMoreTag}>查看更多</Button>}
+        {onShowMoreTag !== undefined && <Button variant={'contained'} disableElevation={true} color={'primary'} size={"small"} onClick={onShowMoreTag}>查看更多</Button>}
       </div>
       <Grid container={true} spacing={4}>
         {items}

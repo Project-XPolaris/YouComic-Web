@@ -2,24 +2,39 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme:Theme) => ({
   main: {
-    maxWidth:theme.spacing(16)
+    maxWidth:theme.spacing(20),
+    borderRadius:2
   },
   cover:{
-    maxHeight:theme.spacing(24)
+    maxHeight:230,
+    width:160,
+    height:230
   },
   title:{
-    maxWidth: 100,
     textOverflow:"ellipsis",
-    fontWeight: 600,
-    height:theme.spacing(2)
+    fontWeight: 300,
+    fontSize:16,
+    maxHeight:theme.spacing(3),
+    lineHeight:theme.spacing(3) + "px",
+    color:"#333"
   },
   author:{
     maxWidth: 100,
     textOverflow:"ellipsis",
-    marginTop:theme.spacing(1),
-    fontSize:12,
+    fontSize:13,
+    fontWeight: 300,
     overflow:"hidden",
-    height:theme.spacing(2)
+    lineHeight:theme.spacing(2) + "px",
+    maxHeight:theme.spacing(2),
+  },
+  content:{
+    width:160,
+    height:100,
+    padding:"7px 10px"
+  },
+  link:{
+    color:"#333"
+
   }
 }));
 

@@ -30,7 +30,7 @@ export default function BookRowCollection({ title, books = [], onShowMore }: Boo
         </Box>
         {onShowMore !== undefined && <Button variant={'contained'} disableElevation={true} onClick={onShowMore} size={'small'} color={'primary'}>查看更多</Button>}
       </div>
-      <Grid container={true} spacing={4}>
+      <Grid container={true} spacing={1}>
         {items}
       </Grid>
     </div>

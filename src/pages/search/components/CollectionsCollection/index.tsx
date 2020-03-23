@@ -27,7 +27,7 @@ export default function CollectionsCollection({collections = [],title,onShowMore
         <div className={classes.titleWrap}>
           <Box className={classes.title}>{title}</Box>
         </div>
-        {onShowMoreCollection !== undefined && <Button variant={'contained'} disableElevation={true} color={'primary'} onClick={onShowMoreCollection}>查看更多</Button>}
+        {onShowMoreCollection !== undefined && <Button variant={'contained'} disableElevation={true} color={'primary'} size={"small"} onClick={onShowMoreCollection}>查看更多</Button>}
       </div>
       <Grid container={true} spacing={4}>
         {items}

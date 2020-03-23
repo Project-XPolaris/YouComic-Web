@@ -19,32 +19,50 @@ interface SearchPagePropsType {
 function SearchPage({ dispatch, layout, search }: SearchPagePropsType) {
   const classes = useStyles();
   const { isDrawerOpen } = layout;
-  const { summaryBooks,summaryCollections } = search;
-  const {artist,theme,series} = search.summaryTags;
+  const { summaryBooks, summaryCollections } = search;
+  const { artist, theme, series } = search.summaryTags;
   const onShowMoreBook = () => {
-    router.push(`/search/${search.searchKey}/books`)
+    router.push(`/search/${search.searchKey}/books`);
   };
   const onShowMoreTags = () => {
-    router.push(`/search/${search.searchKey}/tags`)
+    router.push(`/search/${search.searchKey}/tags`);
   };
   const onShowMoreCollections = () => {
-    router.push(`/search/${search.searchKey}/collections`)
+    router.push(`/search/${search.searchKey}/collections`);
   };
   return (
     <div className={isDrawerOpen ? classes.mainExpand : classes.main}>
-      <BookRowCollection title={'相关书籍'} books={summaryBooks} onShowMore={onShowMoreBook} />
-      <div className={classes.resultsWrap}>
-        <TagCollection title={'相关作者'} tags={artist} onShowMoreTag={onShowMoreTags}/>
-      </div>
-      <div className={classes.resultsWrap}>
-        <TagCollection title={'相关主题'} tags={theme} onShowMoreTag={onShowMoreTags}/>
-      </div>
-      <div className={classes.resultsWrap}>
-        <TagCollection title={'相关系列'} tags={series} onShowMoreTag={onShowMoreTags}/>
-      </div>
-      <div className={classes.resultsWrap}>
-        <CollectionsCollection title={'相关收藏夹'} collections={summaryCollections} onShowMoreCollection={onShowMoreCollections}/>
-      </div>
+      {
+        summaryBooks && summaryBooks.length > 0 &&
+        <div className={classes.resultsWrap}>
+          <BookRowCollection title={'相关书籍'} books={summaryBooks} onShowMore={onShowMoreBook}/>
+        </div>
+      }
+      {
+        artist && artist.length > 0 &&
+        <div className={classes.resultsWrap}>
+          <TagCollection title={'相关作者'} tags={artist} onShowMoreTag={onShowMoreTags}/>
+        </div>
+      }
+      {
+        theme && theme.length > 0 &&
+        <div className={classes.resultsWrap}>
+          <TagCollection title={'相关主题'} tags={theme} onShowMoreTag={onShowMoreTags}/>
+        </div>
+      }
+      {
+        series && series.length > 0 &&
+        <div className={classes.resultsWrap}>
+          <TagCollection title={'相关系列'} tags={series} onShowMoreTag={onShowMoreTags}/>
+        </div>
+      }
+      {
+        summaryCollections && summaryCollections.length > 0 &&
+        <div className={classes.resultsWrap}>
+          <CollectionsCollection title={'相关收藏夹'} collections={summaryCollections}
+                                 onShowMoreCollection={onShowMoreCollections}/>
+        </div>
+      }
     </div>
   );
 }

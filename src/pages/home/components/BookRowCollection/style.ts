@@ -4,7 +4,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   main: {},
   title:{
     fontSize:28,
-    fontWeight:400
+    fontWeight:400,
+    marginBottom:theme.spacing(2)
   },
   header:{
     display:"flex",

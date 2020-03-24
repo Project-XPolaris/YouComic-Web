@@ -42,7 +42,8 @@ export interface ApplicationDrawerPropsType {
   dispatch: Dispatch
   layout: LayoutModelStateType
   user: UserStateType,
-  location: any
+  location: any,
+  width:any
 }
 
 interface DrawerNavigationItem {
@@ -70,7 +71,6 @@ const ApplicationDrawer = ({
   const classes = useStyles();
   const theme = useTheme();
   const { drawerMode } = layout;
-  console.log(width);
   // @ts-ignore
   const items: DrawerNavigationItem[] = [
     {

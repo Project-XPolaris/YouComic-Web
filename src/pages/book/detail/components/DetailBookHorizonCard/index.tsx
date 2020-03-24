@@ -2,9 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
 import CoverImage from '../../../../../assets/no-cover.png';
 import router from 'umi/router';
 import { Box } from '@material-ui/core';
@@ -12,14 +9,16 @@ import { Box } from '@material-ui/core';
 const useStyles = makeStyles({
   card: {
     display: 'flex',
+    maxWidth: 330,
+    maxHeight: 160,
   },
   media: {
     maxHeight: 160,
-    maxWidth:114
+    maxWidth: 110,
   },
   title: {
-    overflow:"hidden",
-    textOverflow: "ellipsis"
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
   meta: {
     marginTop: 8,
@@ -31,8 +30,9 @@ const useStyles = makeStyles({
   },
   author: {
     marginTop: 8,
-    overflow:"hidden",
+    overflow: 'hidden',
   },
+
 });
 
 interface BookDetailHorizonCardPropsType {
@@ -71,17 +71,22 @@ export default function BookDetailHorizonCard({
   return (
     <Card className={classes.card} square={true}>
       <CardActionArea className={classes.media} onClick={onCardClick}>
-      <img src={cover || CoverImage} className={classes.media}/>
+        <div>
+          <img src={cover || CoverImage} className={classes.media}/>
+        </div>
       </CardActionArea>
       <div className={classes.infoArea}>
-        <Box fontWeight="fontWeightLight" fontSize="subtitle.fontSize" textOverflow="ellipsis" className={classes.title}>
+        <Box fontWeight="fontWeightLight" fontSize="subtitle.fontSize" textOverflow="ellipsis"
+             className={classes.title}>
           {title}
         </Box>
         <Box fontWeight="fontWeightBold" fontSize="subtitle2.fontSize" className={classes.author}>
           {author.text}
         </Box>
-        {theme && <Box fontWeight="fontWeightLight" fontSize="caption.fontSize" textOverflow="ellipsis"  className={classes.author}>{author.text}</Box>}
-        {series && <Box fontWeight="fontWeightLight" fontSize="caption.fontSize"  textOverflow="ellipsis" className={classes.author}>{series.text}</Box>}
+        {theme && <Box fontWeight="fontWeightLight" fontSize="caption.fontSize" textOverflow="ellipsis"
+                       className={classes.author}>{author.text}</Box>}
+        {series && <Box fontWeight="fontWeightLight" fontSize="caption.fontSize" textOverflow="ellipsis"
+                        className={classes.author}>{series.text}</Box>}
 
       </div>
       {/*<CardContent>*/}

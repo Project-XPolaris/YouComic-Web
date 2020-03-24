@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme:Theme) => ({
   },
   cover:{
     maxHeight:230,
-    width:160,
+    minWidth:160,
     height:230
   },
   title:{
@@ -19,10 +19,18 @@ const useStyles = makeStyles((theme:Theme) => ({
     color:"#333"
   },
   author:{
-    maxWidth: 100,
     textOverflow:"ellipsis",
     fontSize:13,
     fontWeight: 300,
+    overflow:"hidden",
+    lineHeight:theme.spacing(2) + "px",
+    maxHeight:theme.spacing(2),
+  },
+  series:{
+    textOverflow:"ellipsis",
+    fontSize:10,
+    fontWeight: 300,
+    marginTop:8,
     overflow:"hidden",
     lineHeight:theme.spacing(2) + "px",
     maxHeight:theme.spacing(2),

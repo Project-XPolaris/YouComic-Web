@@ -4,42 +4,33 @@ const useStyles = makeStyles(theme => ({
   main: {
     backgroundColor: '#EEEEEE',
     paddingTop: 120,
-    [theme.breakpoints.only('xs')]: {
-      paddingLeft: 12,
-      paddingRight: 12,
-    },
-    [theme.breakpoints.only('sm')]: {
-      paddingLeft: 24,
-      paddingRight: 24,
-    },
-    [theme.breakpoints.only('md')]: {
-      paddingLeft: 48,
-      paddingRight: 48,
-    },
-    [theme.breakpoints.only('lg')]: {
-      paddingLeft: 72,
-      paddingRight: 72,
-    },
-    [theme.breakpoints.only('xl')]: {
-      paddingLeft: 300,
-      paddingRight: 300,
-    },
     paddingBottom: 48,
+    display:"flex",
+    justifyContent:"center"
+  },
+  left:{
+    justifyContent:"center",
+    display:"flex",
+    marginRight:16
+  },
+  right:{
 
   },
   mainContent: {
     paddingBottom: 48,
+    maxWidth:720
   },
   contentHeader: {
     display: 'flex',
   },
   cover: {
     maxWidth: 200,
-    maxHeight: 285,
+    maxHeight: 300,
     [theme.breakpoints.down('sm')]: {
       maxWidth: 120,
       maxHeight: 170,
     },
+    alignSelf:"center"
   },
   coverWarp: {
     display: 'flex',
@@ -56,7 +47,9 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   title: {
-    marginTop: 24,
+    fontSize:30,
+    color:"#212121",
+    marginTop:16
   },
   theme: {
     marginTop: 12,

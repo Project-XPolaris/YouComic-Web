@@ -32,7 +32,13 @@ export default function BookCard({ book }: BookCardPropsType) {
             <Box className={classes.author}>{author?.name || '未知'}</Box>
           </Link> :
             <Box className={classes.author}>未知</Box>
-
+        }
+        {
+          series?
+            <Link href={`/tag/${series.id}`} className={classes.link}>
+              <Box className={classes.series}>{series?.name || '未知'}</Box>
+            </Link> :
+            <Box className={classes.series}>未知</Box>
         }
 
       </CardContent>

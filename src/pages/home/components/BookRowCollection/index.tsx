@@ -17,7 +17,7 @@ export default function BookRowCollection({ title, books = [], onShowMore }: Boo
   const classes = useStyles();
   const items = books!!.map((book: Book) => {
     return (
-      <Grid item={true} key={book.id}>
+      <Grid item={true} key={book.id} style={{padding:8}}>
         <BookCard book={book}/>
       </Grid>
     );
@@ -30,7 +30,7 @@ export default function BookRowCollection({ title, books = [], onShowMore }: Boo
         </Box>
         {onShowMore !== undefined && <Button variant={'contained'} disableElevation={true} onClick={onShowMore} size={'small'} color={'primary'}>查看更多</Button>}
       </div>
-      <Grid container={true} spacing={1}>
+      <Grid container={true}>
         {items}
       </Grid>
     </div>

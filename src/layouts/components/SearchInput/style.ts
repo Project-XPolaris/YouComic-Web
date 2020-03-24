@@ -1,4 +1,4 @@
-import { createStyles, fade, makeStyles, Theme } from '@material-ui/core';
+import { createStyles, fade, makeStyles, Theme,isWidthDown } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -11,10 +11,12 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       marginRight: theme.spacing(2),
       marginLeft: 0,
-      width: 200,
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(3),
         width: 'auto',
+      },
+      [theme.breakpoints.down('md')]: {
+        flexGrow:1
       },
     },
     searchIcon: {

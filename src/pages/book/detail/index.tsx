@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
 import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
-import { Box, Button, Chip, Divider, Grid, Paper, withWidth, WithWidthProps } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Chip,
+  Divider,
+  Grid,
+  Paper,
+  withWidth,
+  WithWidthProps,
+  isWidthDown,
+  isWidthUp,
+} from '@material-ui/core';
 import coverImage from '../../../assets/no-cover.png';
 import BookDetailCard from '@/pages/book/detail/components/DetailBookCard';
 import { DetailModelStateType } from '@/pages/book/detail/model';
@@ -14,6 +25,7 @@ import SelectCollectionDialog from '@/pages/book/detail/components/SelectCollect
 import { UserStateType } from '@/models/user';
 import SideBooks from '@/pages/book/detail/components/SideBooks';
 import useStyles from '@/pages/book/detail/style';
+import BookDetailMobile from '@/pages/book/detail/mobile';
 
 
 interface BookDetailPropsType {
@@ -26,7 +38,7 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
   const classes = useStyles();
   const { book, tags, tagBooks, isSelectCollectionDialogOpen } = bookDetail;
   const { ownCollections } = user;
-  const {series,author,theme} = getBookTagInfo(book);
+  const { series, author, theme } = getBookTagInfo(book);
   const renderTags = () => {
     if (tags) {
       return tags.map((tag: Tag) => {
@@ -168,23 +180,27 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
       return [];
     }
   };
-  return (
-    <div className={classes.main}>
-      <SelectCollectionDialog
-        isOpen={isSelectCollectionDialogOpen}
-        onDialogClose={onAddToCollectionClose}
-        collections={ownCollections}
-        onOk={onSelectCollectionOK}
-      />
-      <Grid container={true} spacing={4}>
-        <Grid item={true} xs={12} sm={12} xl={8}>
+  if (isWidthDown('md', width)) {
+    return (
+      <BookDetailMobile/>
+    );
+  } else {
+    return (
+      <div className={classes.main}>
+        <SelectCollectionDialog
+          isOpen={isSelectCollectionDialogOpen}
+          onDialogClose={onAddToCollectionClose}
+          collections={ownCollections}
+          onOk={onSelectCollectionOK}
+        />
+        <div className={classes.left}>
           <Paper square={true} className={classes.mainContent}>
             <div className={classes.contentHeader}>
               <Box boxShadow={1} className={classes.coverWarp}>
                 <img src={book?.cover || coverImage} className={classes.cover}/>
               </Box>
               <div className={classes.headerInfoContainer}>
-                <Box fontWeight="fontWeightLight" fontSize={'h4.fontSize'} className={classes.title}>
+                <Box className={classes.title}>
                   {book?.name || '未知'}
                 </Box>
                 <Box fontWeight="fontWeightLight" fontSize="subtitle.fontSize">
@@ -263,15 +279,16 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
               </div>
             </div>
           </Paper>
-        </Grid>
-        <Grid item={true} xs={12} sm={12} xl={4}>
-          {getSameThemeBookList().length !== 0 && <SideBooks onSeeMoreClick={onSeeMoreThemeClick} title={'相同主题'} tag={theme} books={getSameThemeBookList()}/>}
+        </div>
+        <div className={classes.right}>
+          {getSameThemeBookList().length !== 0 &&
+          <SideBooks onSeeMoreClick={onSeeMoreThemeClick} title={'相同主题'} tag={theme} books={getSameThemeBookList()}/>}
+          <SideBooks onSeeMoreClick={onSeeMoreSeriesClick} title={'相同系列'} tag={series} books={getSameSeriesBookList()}/>
+        </div>
+      </div>
+    );
+  }
 
-          <SideBooks onSeeMoreClick={onSeeMoreSeriesClick} title={'相同系列'} tag={series} books={getSameSeriesBookList()} />
-        </Grid>
-      </Grid>
-    </div>
-  );
 }
 
 export default connect(({ bookDetail, user }: ConnectType) => ({ bookDetail, user }))(withWidth()(BookDetailPage));

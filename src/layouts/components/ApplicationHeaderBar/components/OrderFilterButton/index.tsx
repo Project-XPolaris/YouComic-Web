@@ -14,21 +14,19 @@ interface OrderFilterButtonPropsType {
   onFilterChange: (isActive: boolean, isAsc: boolean) => void
   defaultAsc?: boolean
   defaultActive?: boolean
+  order?:string
+  isActive?:boolean
 }
 
 
-export default function OrderFilterButton({ text, onFilterChange, defaultActive = false, defaultAsc = true }: OrderFilterButtonPropsType) {
+export default function OrderFilterButton({ text, onFilterChange, defaultActive = false, defaultAsc = true,order="asc",isActive=true }: OrderFilterButtonPropsType) {
   const classes = useStyles();
-  const [isAsc, setIsAsc] = useState(defaultAsc);
-  const [isActive, setIsActive] = useState(defaultActive);
+  const isAsc = order === "asc"
   const onChipClick = () => {
     onFilterChange(!isActive, isAsc);
-    setIsActive(!isActive);
   };
   const onChipDeleteClick = () => {
     onFilterChange(isActive, !isAsc);
-    setIsAsc(!isAsc);
-
   };
   return (
     <Chip
@@ -37,7 +35,7 @@ export default function OrderFilterButton({ text, onFilterChange, defaultActive 
       color="primary"
       onClick={onChipClick}
       variant={isActive ? 'default' : 'outlined'}
-      deleteIcon={isAsc ? <ArrowUpwardIcon/> : <ArrowDownwardIcon/>}
+      deleteIcon={order === 'asc' ? <ArrowUpwardIcon/> : <ArrowDownwardIcon/>}
       onDelete={onChipDeleteClick}
     />
   );

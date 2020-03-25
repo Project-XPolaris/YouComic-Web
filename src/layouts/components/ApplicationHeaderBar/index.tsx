@@ -23,6 +23,9 @@ import SearchTagsToolBar from '@/layouts/components/ApplicationHeaderBar/compone
 import LocalSelect from '@/layouts/components/ApplicationHeaderBar/components/LocalSelect';
 import { ConnectType } from '@/global/connect';
 import { LayoutModelStateType } from '@/models/layout';
+import { BookListModelStateType } from '@/pages/book/list/model';
+import { encodeOrderToUrl, updateQueryParamAndReplaceURL } from '@/util/url';
+import BookListTool from '@/layouts/components/ApplicationHeaderBar/components/BookListTool';
 
 const drawerWidth = 240;
 
@@ -86,11 +89,12 @@ interface ApplicationHeaderBar {
   location: any,
   layout:LayoutModelStateType,
   width:any
+  bookList:BookListModelStateType
 }
 
 const ApplicationHeaderBar = (
   {
-    child, location, user, dispatch,layout,width
+    child, location, user, dispatch,layout,width,bookList
   }: ApplicationHeaderBar,
 ) => {
   const classes = useStyles();
@@ -120,48 +124,6 @@ const ApplicationHeaderBar = (
   };
   const onLoginClick = () => {
     router.push('/user/login');
-  };
-  const [orderFilter, setOrderFilter] = useState({ id: 'desc' });
-  const renderBooksFilter = () => {
-    const onFilterChange = (isActive: boolean, isAsc: boolean, item: any) => {
-      const filter: any = orderFilter;
-      if (isActive) {
-        filter[item.orderKey] = isAsc ? 'asc' : 'desc';
-      } else {
-        if (item.orderKey in orderFilter) {
-          delete filter[item.orderKey];
-        }
-      }
-      setOrderFilter(filter);
-      dispatch({
-        type: 'bookList/setOrder',
-        payload: {
-          order: orderFilter,
-        },
-      });
-      dispatch({
-        type: 'bookList/queryBooks',
-      });
-    };
-    const onTimeRangeFilterChange = (startTime: Moment | null, endTime: Moment | null) => {
-      dispatch({
-        type: 'bookList/setTimeRange',
-        payload: {
-          startTime: startTime === null ? undefined : startTime.subtract(1, 'day').format('YYYY-MM-DD'),
-          endTime: endTime === null ? undefined : endTime.add(1, 'day').format('YYYY-MM-DD'),
-        },
-      });
-      dispatch({
-        type: 'bookList/queryBooks',
-      });
-    };
-    if (location.pathname === '/books') {
-      return (
-        <div style={{ width: '100%', overflow: 'hidden' }}>
-          <BooksTool dispatch={dispatch} onOrderChange={onFilterChange} onTimeRangeChange={onTimeRangeFilterChange}/>
-        </div>
-      );
-    }
   };
   const getAppBarClasses = () => {
     if (isWidthDown("md",width)){
@@ -211,7 +173,7 @@ const ApplicationHeaderBar = (
           }
           <LocalSelect/>
         </Toolbar>
-        {renderBooksFilter()}
+        {location.pathname === "/books" && <BookListTool />}
         {location.pathname.match(/\/search\/.*?\/books$/) && <SearchBooksToolBar dispatch={dispatch}/>}
         {location.pathname.match(/\/search\/.*?\/tags$/) && <SearchTagsToolBar dispatch={dispatch}/>}
       </AppBar>
@@ -223,4 +185,4 @@ const ApplicationHeaderBar = (
   );
 };
 
-export default connect(({ layout, user }: ConnectType) => ({ layout, user }))(withWidth()(ApplicationHeaderBar));
+export default connect(({ layout, user,bookList }: ConnectType) => ({ layout, user,bookList }))(withWidth()(ApplicationHeaderBar));

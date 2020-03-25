@@ -3,7 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import OrderFilterButton from '@/layouts/components/ApplicationHeaderBar/components/OrderFilterButton';
 import { Dispatch } from 'dva';
-import TimeRangeFilter from '@/layouts/components/ApplicationHeaderBar/components/TimeRangePick';
+import TimeRangeFilter, { TimeRangeFilterPropsType } from '@/layouts/components/ApplicationHeaderBar/components/TimeRangePick';
 import { Moment } from 'moment';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -29,7 +29,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 interface BooksToolPropsType {
   dispatch: Dispatch,
   onOrderChange: (isActive: boolean, isAsc: boolean, item: any) => void
-  onTimeRangeChange: (startTime: Moment | null, endTime: Moment | null) => void
+  timeFilter:TimeRangeFilterPropsType
+  orderFilter?:any[]
 
 }
 
@@ -53,12 +54,13 @@ const filterGroup = [
     defaultActive: false,
   },
 ];
-export default function BooksTool({ dispatch, onOrderChange,onTimeRangeChange }: BooksToolPropsType) {
+export default function BooksTool({ onOrderChange,timeFilter,orderFilter=[] }: BooksToolPropsType) {
   const classes = useStyles();
   const filterItems = filterGroup.map(item => {
     const onChange = (isActive: boolean, isAsc: boolean) => {
       onOrderChange(isActive, isAsc, item);
     };
+    const activeItem = orderFilter?.find(activeItem => activeItem.orderKey === item.orderKey)
     return (
       <div key={item.orderKey} className={classes.filterButton}>
         <OrderFilterButton
@@ -66,6 +68,8 @@ export default function BooksTool({ dispatch, onOrderChange,onTimeRangeChange }:
           onFilterChange={onChange}
           defaultActive={item.defaultActive}
           defaultAsc={item.defaultAes}
+          isActive={Boolean(activeItem)}
+          order={activeItem && activeItem.order}
         />
       </div>
     );
@@ -74,7 +78,7 @@ export default function BooksTool({ dispatch, onOrderChange,onTimeRangeChange }:
     <Toolbar className={classes.main}>
       {filterItems}
       <div className={classes.timeRangePickWrap}>
-        <TimeRangeFilter onApplyTimeRange={onTimeRangeChange}/>
+        <TimeRangeFilter {...timeFilter}/>
       </div>
     </Toolbar>
   );

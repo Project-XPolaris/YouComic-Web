@@ -15,6 +15,8 @@
     "@material-ui/lab": "^4.0.0-alpha.39",
     "@material-ui/pickers": "^3.2.9",
     "@types/randomcolor": "^0.5.3",
+    "@types/react-infinite-scroller": "^1.2.1",
+    "@types/urijs": "^1.19.7",
     "dva": "^2.6.0-beta.6",
     "dva-logger": "^1.0.0",
     "ismobilejs": "^1.0.3",
@@ -25,7 +27,9 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-hook-form": "^4.5.3",
-    "umi-request": "^1.2.17"
+    "react-infinite-scroller": "^1.2.4",
+    "umi-request": "^1.2.17",
+    "urijs": "^1.19.2"
   },
   "devDependencies": {
     "@types/jest": "^23.3.12",

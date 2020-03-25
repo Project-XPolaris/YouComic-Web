@@ -6,17 +6,22 @@ import BookCollection, { BookCollectionItem } from '@/layouts/components/BookCol
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Pagination from '@/layouts/components/Pagination';
 import { LayoutModelStateType } from '@/models/layout';
+import { withWidth, isWidthDown } from '@material-ui/core';
+import BoolListMobilePage from '@/pages/book/list/mobile';
+import MaterialPagination from '@material-ui/lab/Pagination';
+import { updateQueryParamAndReplaceURL } from '@/util/url';
 
 interface BookListPropsType {
   dispatch: Dispatch
   bookList: BookListModelStateType
   layout: LayoutModelStateType
+  width: any
 }
 
-const useStyles = makeStyles((theme:Theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   main: {
-    backgroundColor:"#EEEEEE",
-    paddingTop:theme.spacing(20),
+    backgroundColor: '#EEEEEE',
+    paddingTop: theme.spacing(20),
     [theme.breakpoints.only('xs')]: {
       paddingLeft: 12,
       paddingRight: 12,
@@ -38,11 +43,11 @@ const useStyles = makeStyles((theme:Theme) => ({
       paddingRight: theme.spacing(30),
     },
     paddingBottom: 48,
-    minHeight:"100vh"
+    minHeight: '100vh',
   },
   mainExpand: {
-    paddingTop:theme.spacing(20),
-    backgroundColor:"#EEEEEE",
+    paddingTop: theme.spacing(20),
+    backgroundColor: '#EEEEEE',
     [theme.breakpoints.only('xs')]: {
       paddingLeft: 12,
       paddingRight: 12,
@@ -68,7 +73,7 @@ const useStyles = makeStyles((theme:Theme) => ({
       paddingRight: theme.spacing(30),
     },
     paddingBottom: 48,
-    minHeight:"100vh"
+    minHeight: '100vh',
   },
   collectionWrap: {},
   paginationWrap: {
@@ -77,7 +82,7 @@ const useStyles = makeStyles((theme:Theme) => ({
   },
 }));
 
-function BookListPage({ dispatch, bookList, layout }: BookListPropsType) {
+function BookListPage({ dispatch, bookList, layout, width }: BookListPropsType) {
 
   const classes = useStyles();
   const { books } = bookList;
@@ -98,15 +103,7 @@ function BookListPage({ dispatch, bookList, layout }: BookListPropsType) {
     } : undefined)(book.tags.find(tag => tag.type === 'series')),
     link: `/book/${book.id}`,
   }));
-  const [isFirstLoadBook, setIsFirstLoadBook] = useState(true);
-  useEffect(() => {
-    if (isFirstLoadBook) {
-      dispatch({
-        type: 'bookList/queryBooks',
-      });
-      setIsFirstLoadBook(false);
-    }
-  });
+
   const onPaginationChange = (page = bookList.page, pageSize = bookList.pageSize) => {
     dispatch({
       type: 'bookList/setPage',
@@ -126,28 +123,35 @@ function BookListPage({ dispatch, bookList, layout }: BookListPropsType) {
     onPaginationChange(bookList.page - 1);
   };
   const onSelectPage = (page: number) => {
-    onPaginationChange(page);
+    updateQueryParamAndReplaceURL({
+      page
+    },window.location.pathname)
   };
   const { isDrawerOpen } = layout;
 
-  return (
-    <div className={isDrawerOpen ? classes.mainExpand : classes.main}>
-      <div className={classes.collectionWrap}>
-        <BookCollection title={''} books={bookItem || []}/>
-        <div className={classes.paginationWrap}>
-          <Pagination
-            count={bookList.total}
-            page={bookList.page}
-            pageSize={bookList.pageSize}
-            onNextPage={onNextPage}
-            onPreviousPage={onPrevious}
-            onSelectPage={onSelectPage}
-          />
+  if (isWidthDown('md', width)) {
+    return (
+      <BoolListMobilePage/>
+    );
+  } else {
+    return (
+      <div className={isDrawerOpen ? classes.mainExpand : classes.main}>
+        <div className={classes.collectionWrap}>
+          <BookCollection title={''} books={bookItem || []}/>
+          <div className={classes.paginationWrap}>
+            <MaterialPagination
+              count={Math.ceil(bookList.total / bookList.pageSize)}
+              page={bookList.page}
+              onChange={(e,page) => onSelectPage(page)}
+              color={"primary"}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+
 }
 
-export default connect(({ bookList, layout }: ConnectType) => ({ bookList, layout }))(BookListPage);
+export default connect(({ bookList, layout }: ConnectType) => ({ bookList, layout }))(withWidth()(BookListPage));
 

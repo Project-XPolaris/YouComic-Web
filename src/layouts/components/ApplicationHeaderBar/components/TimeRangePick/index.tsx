@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { Box, Button, Chip, IconButton, Popover } from '@material-ui/core';
+import { Button, Chip, IconButton, Popover } from '@material-ui/core';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import {
-  KeyboardDatePicker, MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
+import { KeyboardDatePicker } from '@material-ui/pickers';
 import moment, { Moment } from 'moment';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -38,8 +36,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-interface TimeRangeFilterPropsType {
-  onApplyTimeRange: (startTime: Moment | null, endTime: Moment | null) => void
+export interface TimeRangeFilterPropsType {
+  onApplyTimeRange: (timeRange?:string,startTime?: Moment, endTime?: Moment) => void
+  timeRange?:string
+  startTime?:string
+  endTime?:string
 }
 
 const quickPick = [
@@ -67,11 +68,25 @@ const quickPick = [
     }),
   },
 ];
-export default function TimeRangeFilter({ onApplyTimeRange }: TimeRangeFilterPropsType) {
+export default function TimeRangeFilter({ onApplyTimeRange,timeRange }: TimeRangeFilterPropsType) {
   const classes = useStyles();
-  const [activeQuickPick, setActiveQuickPick] = useState<string | undefined>(undefined);
   const [anchorEl, setAnchorEL] = useState(null);
-  const [isAdvanceTimeRangeActive, setIsAdvanceTimeRangeActive] = useState(false);
+  const [inputStartTime,setInputStartTime] = useState<Moment | undefined>(moment())
+  const [inputEndTime,setInputEndTime] = useState<Moment | undefined>(moment())
+  const setStartTime = (time : Moment | null) => {
+    if (time === null || time === undefined){
+      setInputStartTime(undefined)
+    }else{
+      setInputStartTime(time)
+    }
+  }
+  const setEndTime = (time : Moment | null) => {
+    if (time === null || time === undefined){
+      setInputEndTime(undefined)
+    }else{
+      setInputEndTime(time)
+    }
+  }
   const onExpandButtonClick = (e: any) => {
     setAnchorEL(e.currentTarget);
   };
@@ -80,10 +95,14 @@ export default function TimeRangeFilter({ onApplyTimeRange }: TimeRangeFilterPro
   };
   const quickPickChips = quickPick.map(item => {
     const onQuickPickChipClick = () => {
-      setIsAdvanceTimeRangeActive(false);
-      setActiveQuickPick(item.timeKey);
       const { start, end } = item.getTime();
-      onApplyTimeRange(start, end);
+      if (timeRange === item.timeKey){
+        onApplyTimeRange(undefined,undefined, undefined);
+      }else{
+        onApplyTimeRange(item.timeKey,start, end);
+
+      }
+
     };
     return (
       <Chip
@@ -93,39 +112,28 @@ export default function TimeRangeFilter({ onApplyTimeRange }: TimeRangeFilterPro
         clickable={true}
         className={classes.quickPickItem}
         color={'primary'}
-        variant={(!isAdvanceTimeRangeActive && activeQuickPick === item.timeKey) ? 'default' : 'outlined'}
+        variant={(timeRange && timeRange === item.timeKey) ? 'default' : 'outlined'}
       />
     );
   });
-  const [selectedStartDate, setSelectedStartDate] = React.useState<Moment | null>(moment());
-  const [selectedEndDate, setSelectedEndDate] = React.useState<Moment | null>(moment());
-  const onSelectStartDate = (date: Moment | null) => {
-    setSelectedStartDate(date);
-  };
-  const onSelectEndDate = (date: Moment | null) => {
-    setSelectedEndDate(date);
-  };
   const onApplyClick = () => {
-    setActiveQuickPick(undefined);
-    if (isAdvanceTimeRangeActive) {
-      onApplyTimeRange(null, null);
-      setIsAdvanceTimeRangeActive(false);
-    } else {
-      onApplyTimeRange(selectedStartDate, selectedEndDate);
-    }
-    setIsAdvanceTimeRangeActive(true);
+    onApplyTimeRange("custom",inputStartTime,inputEndTime)
   };
   const renderTimeRangeChip = () => {
     const onTimeRangeClick = () => {
-      onApplyTimeRange(null, null);
-      setIsAdvanceTimeRangeActive(false);
+      if (timeRange === "custom"){
+        onApplyTimeRange(undefined,undefined, undefined);
+      }else{
+        onApplyTimeRange("custom",inputStartTime,inputEndTime)
+      }
+
     };
-    const text = `${selectedStartDate ? selectedStartDate.format('YYYY-MM-DD') : '任何'} 至 ${selectedEndDate ? selectedEndDate.format('YYYY-MM-DD') : '任何'}`;
+    const text = `${inputStartTime ? inputStartTime.format('YYYY-MM-DD') : '任何'} 至 ${inputEndTime ? inputEndTime.format('YYYY-MM-DD') : '任何'}`;
     return (
       <Chip
         label={text}
         color={'primary'}
-        variant={isAdvanceTimeRangeActive ? 'default' : 'outlined'}
+        variant={timeRange === "custom" ? 'default' : 'outlined'}
         onClick={onTimeRangeClick}
         clickable={true}
       />
@@ -133,7 +141,7 @@ export default function TimeRangeFilter({ onApplyTimeRange }: TimeRangeFilterPro
   };
   return (
     <div className={classes.main}>
-      {isAdvanceTimeRangeActive ? renderTimeRangeChip() : quickPickChips}
+      {timeRange && timeRange === "custom" ? renderTimeRangeChip() : quickPickChips}
       <IconButton onClick={onExpandButtonClick} size={'small'} color={'primary'}>
         {Boolean(anchorEl) ? <KeyboardArrowDownIcon/> : <KeyboardArrowLeftIcon/>}
       </IconButton>
@@ -153,7 +161,7 @@ export default function TimeRangeFilter({ onApplyTimeRange }: TimeRangeFilterPro
         elevation={1}
       >
         <div className={classes.expandContent}>
-          {isAdvanceTimeRangeActive && quickPickChips}
+          {timeRange && timeRange === "custom" && quickPickChips}
           <KeyboardDatePicker
             variant="inline"
             format="YYYY-MM-DD"
@@ -163,8 +171,8 @@ export default function TimeRangeFilter({ onApplyTimeRange }: TimeRangeFilterPro
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
-            value={selectedStartDate}
-            onChange={onSelectStartDate}
+            value={inputStartTime}
+            onChange={setStartTime}
           />
           <KeyboardDatePicker
             variant="inline"
@@ -175,13 +183,13 @@ export default function TimeRangeFilter({ onApplyTimeRange }: TimeRangeFilterPro
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
-            value={selectedEndDate}
-            onChange={onSelectEndDate}
+            value={inputEndTime}
+            onChange={setEndTime}
           />
           <div className={classes.actionContainer}>
             <Button
               color={'primary'}
-              variant={isAdvanceTimeRangeActive ? 'contained' : 'outlined'}
+              variant={timeRange && timeRange === "custom" ? 'contained' : 'outlined'}
               disableElevation={true}
               onClick={onApplyClick}
             >设置

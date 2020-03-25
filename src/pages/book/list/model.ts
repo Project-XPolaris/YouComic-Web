@@ -4,6 +4,7 @@ import { Book, queryBooks } from '@/services/book';
 import { Reducer } from 'redux';
 import { ConnectType } from '@/global/connect';
 import { getCoverThumbnailURL } from '@/util/image';
+import { encodeOrderToUrl, getOrdersFromUrlQuery, getPaginationFromURL } from '@/util/url';
 const pathToRegexp = require('path-to-regexp');
 
 export interface BookListModelStateType {
@@ -11,9 +12,17 @@ export interface BookListModelStateType {
   page: number,
   pageSize: number,
   total: number
-  order?: string
+  order: any[]
   startTime?: string,
-  endTime?: string
+  endTime?: string,
+  timeRange?:string
+  mobile:{
+    books:[]
+    page:number
+    pageSize:number
+    count:number
+    hasMore:boolean
+  }
 }
 
 export interface BookListModelType {
@@ -23,10 +32,16 @@ export interface BookListModelType {
     setPage: Reducer
     setOrder: Reducer
     setTimeRange: Reducer
+    onQueryMobileBookSuccess:Reducer
+    clearLoadMore:Reducer
   }
   state: BookListModelStateType
   effects: {
     queryBooks: Effect
+    queryMobileBook:Effect
+  }
+  subscriptions: {
+    setup: Subscription
   }
 
 }
@@ -37,13 +52,55 @@ const BookListModel: BookListModelType = {
     page: 1,
     pageSize: 24,
     total: 0,
-    order: '-id',
+    order: [],
+    mobile:{
+      books:[],
+      page:0,
+      pageSize:10,
+      count:0,
+      hasMore:true
+    }
+  },
+  subscriptions: {
+    setup({dispatch, history}) {
+      history.listen((location: any) => {
+        if (location.pathname === '/books') {
+          const {page, pageSize} = getPaginationFromURL(location.query,1,24)
+          dispatch({
+            type:"setPage",
+            payload:{
+              page,
+              pageSize
+            }
+          })
+          const {timeRange,startTime,endTime} = location.query
+          dispatch({
+            type:"setTimeRange",
+            payload:{
+              timeRange,startTime,endTime
+            }
+          })
+          dispatch({
+            type:"setOrder",
+            payload:{
+              order:getOrdersFromUrlQuery(location.query.order,"-id")
+            }
+          })
+          dispatch({
+            type:"clearLoadMore"
+          })
+          dispatch({
+            type:"queryBooks"
+          })
+        }
+      });
+    },
   },
   effects: {
     * queryBooks({ payload }, { call, put, select }) {
       const { page, pageSize, order, startTime, endTime } = yield select((state: ConnectType) => (state.bookList));
       const queryBookResponse: ListQueryContainer<Book> = yield call(queryBooks, {
-        page, page_size: pageSize, order, startTime, endTime,
+        page, page_size: pageSize, order:encodeOrderToUrl(order), startTime, endTime,
       });
       queryBookResponse.result.forEach(book => book.cover = getCoverThumbnailURL(book.cover));
       yield put({
@@ -54,6 +111,29 @@ const BookListModel: BookListModelType = {
         },
       });
     },
+    *queryMobileBook({payload:{page}},{call,put,select}){
+      const bookListState : BookListModelStateType = yield select((state: ConnectType) => (state.bookList));
+      const {mobile:{pageSize},order,startTime,endTime} = bookListState
+      const queryBookResponse: ListQueryContainer<Book> = yield call(queryBooks, {
+        page:bookListState.mobile.page + 1,
+        page_size: pageSize,
+        order : encodeOrderToUrl(order),
+        startTime,
+        endTime,
+      });
+      queryBookResponse.result.forEach(book => book.cover = getCoverThumbnailURL(book.cover));
+
+      yield put({
+        type:"onQueryMobileBookSuccess",
+        payload:{
+          books:queryBookResponse.result,
+          page:queryBookResponse.page,
+          pageSize:queryBookResponse.pageSize,
+          count:queryBookResponse.count,
+          hasMore:queryBookResponse.next.length > 0
+        }
+      })
+    }
   },
   reducers: {
     onQueryBookSuccess(state, { payload }) {
@@ -74,15 +154,40 @@ const BookListModel: BookListModelType = {
         ...state,
         startTime: payload.startTime,
         endTime: payload.endTime,
+        timeRange:payload.timeRange
       };
     },
-    setOrder(state, { payload }) {
-      const order = Object.keys(payload.order).map((key: string) => `${payload.order[key] === 'asc' ? '' : '-'}${key}`).join(',');
+    setOrder(state, { payload:{order} }) {
       return {
         ...state,
         order,
       };
     },
+    onQueryMobileBookSuccess(state,{payload:{page,pageSize,books,hasMore}}){
+      return {
+        ...state,
+        mobile:{
+          ...state.mobile,
+          books:[...state.mobile.books,...books],
+          page,
+          pageSize,
+          hasMore
+        }
+      }
+    },
+    clearLoadMore(state,_){
+      return{
+        ...state,
+        mobile:{
+          books:[],
+          page:0,
+          pageSize:10,
+          count:0,
+          hasMore:true
+        }
+      }
+    }
+
   },
 };
 export default BookListModel;

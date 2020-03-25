@@ -51,7 +51,7 @@ export default function SearchBooksToolBar({dispatch}: SearchBooksToolBarPropsTy
 
     return (
       <div style={{ width: '100%', overflow: 'hidden' }}>
-        <BooksTool dispatch={dispatch} onOrderChange={onFilterChange} onTimeRangeChange={onTimeRangeFilterChange}/>
+        {/*<BooksTool dispatch={dispatch} onOrderChange={onFilterChange} onTimeRangeChange={onTimeRangeFilterChange}/>*/}
       </div>
     );
 

@@ -3,6 +3,7 @@ import { Reducer } from 'redux';
 import { queryTags, Tag } from '@/services/tag';
 import { ConnectType } from '@/global/connect';
 import { ListQueryContainer } from '@/services/base';
+import { getPaginationFromURL } from '@/util/url';
 
 const pathToRegexp = require('path-to-regexp');
 
@@ -48,7 +49,7 @@ const SearchTagsModel: SearchTagsModelType = {
   },
   subscriptions: {
     'setup'({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen((location:any) => {
         const regexp = pathToRegexp('/search/:name/tags');
         const match = regexp.exec(location.pathname);
         if (match) {
@@ -58,6 +59,25 @@ const SearchTagsModel: SearchTagsModelType = {
               searchKey: match[1],
             },
           });
+          const {page,pageSize} = getPaginationFromURL(location.query,1,24)
+          dispatch({
+            type:"setPage",
+            payload:{
+              page,pageSize
+            }
+          })
+          let {type} = location.query
+          if (!Array.isArray(type)){
+            type = [type,]
+          }
+          dispatch({
+            type:"setFilter",
+            payload:{
+              filter:{
+                type
+              }
+            }
+          })
           dispatch({
             type: 'searchTags',
           });

@@ -12,27 +12,26 @@ const useStyles = makeStyles((theme: Theme) => ({
 interface ChipGroupFilterPropsType {
   items: ChipFilterItem[],
   onFilterChange:(selectedFilters:string[]) => void
+  filter?:string[]
 }
 
 export interface ChipFilterItem {
   title: string
   filterKey: string
+
 }
 
-export default function ChipGroupFilter({ items ,onFilterChange}: ChipGroupFilterPropsType) {
+export default function ChipGroupFilter({ items ,onFilterChange,filter = []}: ChipGroupFilterPropsType) {
   const classes = useStyles();
-  const [selectedFilters, setSelectFilters] = useState<string[]>([]);
   const chipItems = items.map((item: ChipFilterItem) => {
-    const isSelected = selectedFilters.find(selectedFilters => selectedFilters === item.filterKey) !== undefined;
+    const isSelected = filter.find(selectedFilters => selectedFilters === item.filterKey) !== undefined;
     const onChipClick = () => {
       if (isSelected) {
-        const selected = selectedFilters.filter(selectedFilter => selectedFilter !== item.filterKey);
+        const selected = filter.filter(selectedFilter => selectedFilter !== item.filterKey);
         onFilterChange(selected);
-        setSelectFilters(selected);
       } else {
-        const selected = [...selectedFilters, item.filterKey];
+        const selected = [...filter, item.filterKey];
         onFilterChange(selected);
-        setSelectFilters(selected);
       }
     };
     return (

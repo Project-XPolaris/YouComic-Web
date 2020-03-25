@@ -1,14 +1,12 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { connect, Dispatch } from 'dva';
-import useStyles from './style'
+import useStyles from './style';
 import { ConnectType } from '@/global/connect';
 import { SearchTagsModelStateType } from '@/pages/search/tags/model';
 import { LayoutModelStateType } from '@/models/layout';
-import TagCollection from '@/pages/search/components/TagCollection';
 import TagsCollection from '@/pages/search/tags/components/TagCollection';
-import Pagination from '@/layouts/components/Pagination';
-
+import MaterialPagination from '@material-ui/lab/Pagination';
+import { updateQueryParamAndReplaceURL } from '@/util/url';
 
 
 interface SearchTagsPropsType {
@@ -20,38 +18,20 @@ interface SearchTagsPropsType {
 function SearchTagsPage({ dispatch ,layout,searchTags}: SearchTagsPropsType) {
   const classes = useStyles();
   const {tags} = searchTags;
-  const onPaginationChange = (page = searchTags.page, pageSize = searchTags.pageSize) => {
-    dispatch({
-      type: 'searchTags/setPage',
-      payload: {
-        page,
-        pageSize,
-      },
-    });
-    dispatch({
-      type: 'searchTags/searchTags',
-    });
-  };
-  const onNextPage = () => {
-    onPaginationChange(searchTags.page + 1);
-  };
-  const onPrevious = () => {
-    onPaginationChange(searchTags.page - 1);
-  };
-  const onSelectPage = (currentPage: number) => {
-    onPaginationChange(currentPage);
+  const onPaginationChange = (e:any,page = searchTags.page) => {
+    updateQueryParamAndReplaceURL({
+      page
+    })
   };
   return (
     <div className={layout.isDrawerOpen?classes.mainExpand:classes.main}>
       <TagsCollection tags={tags} />
       <div className={classes.paginationWrap}>
-        <Pagination
-          count={searchTags.count}
+        <MaterialPagination
+          count={Math.ceil(searchTags.count / searchTags.pageSize)}
+          color="primary"
           page={searchTags.page}
-          pageSize={searchTags.pageSize}
-          onNextPage={onNextPage}
-          onPreviousPage={onPrevious}
-          onSelectPage={onSelectPage}
+          onChange={onPaginationChange}
         />
       </div>
     </div>

@@ -175,7 +175,7 @@ const ApplicationHeaderBar = (
         </Toolbar>
         {location.pathname === "/books" && <BookListTool />}
         {location.pathname.match(/\/search\/.*?\/books$/) && <SearchBooksToolBar/>}
-        {location.pathname.match(/\/search\/.*?\/tags$/) && <SearchTagsToolBar dispatch={dispatch}/>}
+        {location.pathname.match(/\/search\/.*?\/tags$/) && <SearchTagsToolBar />}
       </AppBar>
       <ApplicationDrawer isOpen={isDrawerOpen} location={location}/>
       <main className={getContentClasses()}>

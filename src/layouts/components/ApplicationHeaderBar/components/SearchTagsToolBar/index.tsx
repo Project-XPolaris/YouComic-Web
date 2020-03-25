@@ -1,8 +1,11 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Toolbar } from '@material-ui/core';
-import { Dispatch } from 'dva';
+import { connect, Dispatch } from 'dva';
 import ChipGroupFilter, { ChipFilterItem } from '@/layouts/components/ApplicationHeaderBar/components/ChipFilter';
+import { updateQueryParamAndReplaceURL } from '@/util/url';
+import { ConnectType } from '@/global/connect';
+import { SearchTagsModelStateType } from '@/pages/search/tags/model';
 
 const useStyles = makeStyles({
   main: {
@@ -19,10 +22,11 @@ const useStyles = makeStyles({
 
 interface SearchTagsToolBarPropsType {
   dispatch: Dispatch
+  searchTags:SearchTagsModelStateType
 }
 
 
-export default function SearchTagsToolBar({ dispatch }: SearchTagsToolBarPropsType) {
+function SearchTagsToolBar({ dispatch,searchTags }: SearchTagsToolBarPropsType) {
   const classes = useStyles();
   const tagTypeFilterItems: ChipFilterItem[] = [
     {
@@ -43,21 +47,18 @@ export default function SearchTagsToolBar({ dispatch }: SearchTagsToolBarPropsTy
     },
   ];
   const onTagTypeFilterChange = (selected: string[]) => {
-    dispatch({
-      type: 'searchTags/setFilter',
-      payload: {
-        filter: {
-          type: selected,
-        },
-      },
-    });
-    dispatch({
-      type: 'searchTags/searchTags',
-    });
+    updateQueryParamAndReplaceURL({
+      type:selected,
+    })
   };
   return (
     <Toolbar className={classes.main}>
-      <ChipGroupFilter items={tagTypeFilterItems} onFilterChange={onTagTypeFilterChange}/>
+      <ChipGroupFilter
+        items={tagTypeFilterItems}
+        onFilterChange={onTagTypeFilterChange}
+        filter={searchTags?.filter?.type}
+      />
     </Toolbar>
   );
 }
+export default connect(({searchTags}:ConnectType) => ({searchTags}))(SearchTagsToolBar);

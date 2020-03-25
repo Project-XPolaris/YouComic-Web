@@ -9,14 +9,17 @@ import BookRowCollection from '@/pages/home/components/BookRowCollection';
 import TagCollection from '@/pages/search/components/TagCollection';
 import { router } from 'umi';
 import CollectionsCollection from '@/pages/search/components/CollectionsCollection';
+import { withWidth,isWidthDown } from '@material-ui/core';
+import SearchMobilePage from '@/pages/search/mobile';
 
 interface SearchPagePropsType {
   dispatch: Dispatch
   layout: LayoutModelStateType
   search: SearchModelStateType
+  width:any
 }
 
-function SearchPage({ dispatch, layout, search }: SearchPagePropsType) {
+function SearchPage({ dispatch, layout, search,width }: SearchPagePropsType) {
   const classes = useStyles();
   const { isDrawerOpen } = layout;
   const { summaryBooks, summaryCollections } = search;
@@ -30,6 +33,9 @@ function SearchPage({ dispatch, layout, search }: SearchPagePropsType) {
   const onShowMoreCollections = () => {
     router.push(`/search/${search.searchKey}/collections`);
   };
+  if (isWidthDown("md",width)){
+    return <SearchMobilePage />
+  }
   return (
     <div className={isDrawerOpen ? classes.mainExpand : classes.main}>
       {
@@ -67,4 +73,4 @@ function SearchPage({ dispatch, layout, search }: SearchPagePropsType) {
   );
 }
 
-export default connect(({ layout, search }: ConnectType) => ({ layout, search }))(SearchPage);
+export default connect(({ layout, search }: ConnectType) => ({ layout, search }))(withWidth()(SearchPage));

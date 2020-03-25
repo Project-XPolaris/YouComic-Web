@@ -4,6 +4,8 @@ import { Book, queryBooks } from '@/services/book';
 import { ConnectType } from '@/global/connect';
 import { ListQueryContainer } from '@/services/base';
 import { getCoverThumbnailURL } from '@/util/image';
+import { encodeOrderToUrl, getOrdersFromUrlQuery, getPaginationFromURL } from '@/util/url';
+import { BookListModelStateType } from '@/pages/book/list/model';
 
 const pathToRegexp = require('path-to-regexp');
 
@@ -16,9 +18,17 @@ export interface SearchBooksModelStateType {
   pageSize: number
   count: number
   searchKey?: string
-  order: '-id'
+  order: any[]
   startTime?: string,
-  endTime?: string
+  endTime?: string,
+  timeRange?:string
+  mobile:{
+    books:[]
+    page:number
+    pageSize:number
+    count:number
+    hasMore:boolean
+  }
 }
 
 export interface SearchBooksModelType {
@@ -30,10 +40,14 @@ export interface SearchBooksModelType {
     onSearchBooksSuccess: Reducer
     setFilter: Reducer
     setTimeRange: Reducer
+    onQueryMobileBookSuccess:Reducer
+    clearLoadMore:Reducer
   }
   state: SearchBooksModelStateType
   effects: {
     searchBooks: Effect
+    queryMobileBook:Effect
+
   }
   subscriptions: {
     setup: Subscription
@@ -45,13 +59,20 @@ const SearchBooksModel: SearchBooksModelType = {
   state: {
     filter: {},
     page: 1,
-    pageSize: 30,
+    pageSize: 24,
     count: 0,
-    order: '-id',
+    order: [],
+    mobile:{
+      books:[],
+      page:0,
+      pageSize:10,
+      count:0,
+      hasMore:true
+    }
   },
   subscriptions: {
     'setup'({ dispatch, history }) {
-      history.listen((location) => {
+      history.listen((location:any) => {
         const regexp = pathToRegexp('/search/:name/books');
         const match = regexp.exec(location.pathname);
         if (match) {
@@ -61,6 +82,29 @@ const SearchBooksModel: SearchBooksModelType = {
               searchKey: match[1],
             },
           });
+          const {page,pageSize} = getPaginationFromURL(location.query,1,24)
+          dispatch({
+            type:"setPage",
+            payload:{
+              page,pageSize
+            }
+          })
+          dispatch({
+            type:"setOrder",
+            payload:{
+              order:getOrdersFromUrlQuery(location.query.order,"-id")
+            }
+          })
+          const {timeRange,startTime,endTime} = location.query
+          dispatch({
+            type:"setTimeRange",
+            payload:{
+              timeRange,startTime,endTime
+            }
+          })
+          dispatch({
+            type:"clearLoadMore"
+          })
           dispatch({
             type: 'searchBooks',
           });
@@ -76,7 +120,7 @@ const SearchBooksModel: SearchBooksModelType = {
           nameSearch: searchKey,
           page,
           pageSize, ...filter,
-          order,
+          order:encodeOrderToUrl(order),
           startTime,endTime
         });
         queryBooksResponse.result.forEach((book: Book) => book.cover = getCoverThumbnailURL(book.cover));
@@ -91,6 +135,30 @@ const SearchBooksModel: SearchBooksModelType = {
         });
       }
     },
+    *queryMobileBook(_,{call,put,select}){
+      const searchBooksState : SearchBooksModelStateType = yield select((state: ConnectType) => (state.searchBooks));
+      const {mobile:{pageSize,page},order,startTime,endTime} = searchBooksState
+      const queryBookResponse: ListQueryContainer<Book> = yield call(queryBooks, {
+        page:page + 1,
+        page_size: pageSize,
+        order : encodeOrderToUrl(order),
+        nameSearch:searchBooksState.searchKey,
+        startTime,
+        endTime,
+      });
+      queryBookResponse.result.forEach(book => book.cover = getCoverThumbnailURL(book.cover));
+
+      yield put({
+        type:"onQueryMobileBookSuccess",
+        payload:{
+          books:queryBookResponse.result,
+          page:queryBookResponse.page,
+          pageSize:queryBookResponse.pageSize,
+          count:queryBookResponse.count,
+          hasMore:queryBookResponse.next.length > 0
+        }
+      })
+    }
   },
   reducers: {
     setFilter(state, { payload: { filter } }) {
@@ -103,10 +171,9 @@ const SearchBooksModel: SearchBooksModelType = {
       };
     },
     setOrder(state, { payload}) {
-      const order = Object.keys(payload.order).map((key: string) => `${payload.order[key] === 'asc' ? '' : '-'}${key}`).join(',');
       return {
         ...state,
-        order,
+        order:payload.order,
       };
     },
     onSearchBooksSuccess(state, { payload: { result, page, pageSize, count } }) {
@@ -127,9 +194,34 @@ const SearchBooksModel: SearchBooksModelType = {
         searchKey,
       };
     },
-    setTimeRange(state,{payload:startTime,endTime}){
+    setTimeRange(state,{payload:{timeRange,startTime,endTime}}){
       return{
-        ...state
+        ...state,
+        timeRange,startTime,endTime
+      }
+    },
+    onQueryMobileBookSuccess(state,{payload:{page,pageSize,books,hasMore}}){
+      return {
+        ...state,
+        mobile:{
+          ...state.mobile,
+          books:[...state.mobile.books,...books],
+          page,
+          pageSize,
+          hasMore
+        }
+      }
+    },
+    clearLoadMore(state,_){
+      return{
+        ...state,
+        mobile:{
+          books:[],
+          page:0,
+          pageSize:10,
+          count:0,
+          hasMore:true
+        }
       }
     }
   },

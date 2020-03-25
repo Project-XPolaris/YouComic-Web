@@ -174,7 +174,7 @@ const ApplicationHeaderBar = (
           <LocalSelect/>
         </Toolbar>
         {location.pathname === "/books" && <BookListTool />}
-        {location.pathname.match(/\/search\/.*?\/books$/) && <SearchBooksToolBar dispatch={dispatch}/>}
+        {location.pathname.match(/\/search\/.*?\/books$/) && <SearchBooksToolBar/>}
         {location.pathname.match(/\/search\/.*?\/tags$/) && <SearchTagsToolBar dispatch={dispatch}/>}
       </AppBar>
       <ApplicationDrawer isOpen={isDrawerOpen} location={location}/>

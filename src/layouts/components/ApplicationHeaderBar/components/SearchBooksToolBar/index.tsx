@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Moment } from 'moment';
 import BooksTool from '@/layouts/components/ApplicationHeaderBar/components/BooksTool';
-import { Dispatch } from 'dva';
+import { connect, Dispatch } from 'dva';
+import { encodeOrderToUrl, updateQueryParamAndReplaceURL } from '@/util/url';
+import { TimeRangeFilterPropsType } from '@/layouts/components/ApplicationHeaderBar/components/TimeRangePick';
+import { ConnectType } from '@/global/connect';
+import { SearchBooksModelStateType } from '@/pages/search/books/model';
 
 const useStyles = makeStyles({
   main: {},
@@ -10,49 +14,52 @@ const useStyles = makeStyles({
 
 interface SearchBooksToolBarPropsType {
   dispatch:Dispatch
+  searchBooks:SearchBooksModelStateType
 }
 
 
-export default function SearchBooksToolBar({dispatch}: SearchBooksToolBarPropsType) {
+function SearchBooksToolBar({dispatch,searchBooks}: SearchBooksToolBarPropsType) {
   const classes = useStyles();
-  const [orderFilter, setOrderFilter] = useState({ id: 'desc' });
   const onFilterChange = (isActive: boolean, isAsc: boolean, item: any) => {
-    const filter: any = orderFilter;
+    const {order} = searchBooks
     if (isActive) {
-      filter[item.orderKey] = isAsc ? 'asc' : 'desc';
-    } else {
-      if (item.orderKey in orderFilter) {
-        delete filter[item.orderKey];
-      }
+      updateQueryParamAndReplaceURL({
+        order:encodeOrderToUrl([
+          ...order.filter(activeOrder => activeOrder.orderKey !== item.orderKey),
+          {orderKey:item.orderKey,order:isAsc?"asc":"desc"}
+        ])
+      })
+    }else{
+      updateQueryParamAndReplaceURL({
+        order:encodeOrderToUrl([
+          ...order.filter(activeOrder => activeOrder.orderKey !== item.orderKey),
+        ])
+      })
     }
-    setOrderFilter(filter);
-    dispatch({
-      type: 'searchBooks/setOrder',
-      payload: {
-        order: orderFilter,
-      },
-    });
-    dispatch({
-      type: 'searchBooks/searchBooks',
-    });
   };
-  const onTimeRangeFilterChange = (startTime: Moment | null, endTime: Moment | null) => {
-    dispatch({
-      type: 'searchBooks/setTimeRange',
-      payload: {
-        startTime: startTime === null ? undefined : startTime.subtract(1, 'day').format('YYYY-MM-DD'),
-        endTime: endTime === null ? undefined : endTime.add(1, 'day').format('YYYY-MM-DD'),
-      },
-    });
-    dispatch({
-      type: 'searchBooks/searchBooks',
-    });
+  const onTimeRangeFilterChange = (timeRange?:string,startTime?: Moment, endTime?: Moment) => {
+    updateQueryParamAndReplaceURL({
+      startTime: startTime?.subtract(1, 'day').format('YYYY-MM-DD'),
+      endTime:  endTime?.add(1, 'day').format('YYYY-MM-DD'),
+      timeRange:timeRange
+    })
   };
-
-    return (
-      <div style={{ width: '100%', overflow: 'hidden' }}>
-        {/*<BooksTool dispatch={dispatch} onOrderChange={onFilterChange} onTimeRangeChange={onTimeRangeFilterChange}/>*/}
-      </div>
-    );
-
+  const timeFilter : TimeRangeFilterPropsType = {
+    onApplyTimeRange:onTimeRangeFilterChange,
+    startTime:searchBooks?.startTime,
+    endTime:searchBooks?.endTime,
+    timeRange:searchBooks?.timeRange
+  }
+  return (
+    <div style={{ width: '100%', overflow: 'hidden' }}>
+      <BooksTool
+        dispatch={dispatch}
+        onOrderChange={onFilterChange}
+        timeFilter={timeFilter}
+        orderFilter={searchBooks?.order}
+      />
+    </div>
+  );
 }
+
+export default connect(({searchBooks}:ConnectType) => ({searchBooks}))(SearchBooksToolBar);

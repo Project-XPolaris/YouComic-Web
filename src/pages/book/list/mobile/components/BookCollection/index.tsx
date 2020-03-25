@@ -16,12 +16,10 @@ interface BookCollectionPropsType {
   books?: Book[]
   onLoadMore:(page:any) => void
   hasMore:boolean
-  startPage:number
-  scrollRef:(ref:any) => void
 }
 
 
-export default function BookCollection({ books = [],onLoadMore,hasMore,scrollRef }: BookCollectionPropsType) {
+export default function BookCollection({ books = [],onLoadMore,hasMore}: BookCollectionPropsType) {
   const classes = useStyles();
   return (
     <div className={classes.main}>
@@ -31,7 +29,6 @@ export default function BookCollection({ books = [],onLoadMore,hasMore,scrollRef
         hasMore={hasMore}
         loader={<div className="loader" key={0}>Loading ...</div>}
         useWindow={true}
-        ref={scrollRef}
       >
         {
           books.map(book => {

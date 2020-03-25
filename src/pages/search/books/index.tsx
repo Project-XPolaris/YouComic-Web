@@ -6,28 +6,30 @@ import BookRowCollection from '@/pages/home/components/BookRowCollection';
 import { SearchBooksModelStateType } from '@/pages/search/books/model';
 import { LayoutModelStateType } from '@/models/layout';
 import MaterialPagination from '@material-ui/lab/Pagination';
+import { updateQueryParamAndReplaceURL } from '@/util/url';
+import { withWidth,isWidthDown } from '@material-ui/core';
+import SearchBookMobilePage from '@/pages/search/books/mobile';
 
 interface SearchBooksPagePropsType {
   dispatch: Dispatch,
   searchBooks: SearchBooksModelStateType
   layout: LayoutModelStateType
+  width:any
 }
 
-function SearchBooksPage({ dispatch, searchBooks, layout }: SearchBooksPagePropsType) {
+function SearchBooksPage({ dispatch, searchBooks, layout,width }: SearchBooksPagePropsType) {
   const classes = useStyles();
   const { books } = searchBooks;
   const onPaginationChange = (e:any,page = searchBooks.page) => {
-    dispatch({
-      type: 'searchBooks/setPage',
-      payload: {
-        page,
-        pageSize:searchBooks.pageSize,
-      },
-    });
-    dispatch({
-      type: 'searchBooks/searchBooks',
-    });
+    updateQueryParamAndReplaceURL({
+      page
+    })
   };
+  if (isWidthDown("md",width)){
+    return (
+      <SearchBookMobilePage />
+    )
+  }
   return (
     <div className={layout.isDrawerOpen ? classes.mainExpand : classes.main}>
       <BookRowCollection title={''} books={books}/>
@@ -47,4 +49,4 @@ export default connect(({ search, searchBooks, layout }: ConnectType) => ({
   search,
   searchBooks,
   layout,
-}))(SearchBooksPage);
+}))(withWidth()(SearchBooksPage));

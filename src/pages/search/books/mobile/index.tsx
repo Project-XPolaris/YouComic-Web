@@ -1,10 +1,9 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect, Dispatch } from 'dva';
-import { ConnectType } from '@/global/connect';
-import { BookListModelStateType } from '@/pages/book/list/model';
 import BookCollection from '@/pages/book/list/mobile/components/BookCollection';
-
+import { ConnectType } from '@/global/connect';
+import React from 'react';
+import { SearchBooksModelStateType } from '@/pages/search/books/model';
 
 const useStyles = makeStyles({
   main: {
@@ -16,16 +15,16 @@ const useStyles = makeStyles({
 
 });
 
-interface BoolListMobilePagePropsType {
+interface SearchBookMobilePagePropsType {
   dispatch: Dispatch,
-  bookList:BookListModelStateType
+  searchBooks:SearchBooksModelStateType
 }
 
-function BoolListMobilePage({ dispatch,bookList:{mobile} }: BoolListMobilePagePropsType) {
+function SearchBookMobilePage({ dispatch,searchBooks:{mobile} }: SearchBookMobilePagePropsType) {
   const classes = useStyles();
-  const onLoadMore = (page:any) => {
+  const onLoadMore = () => {
     dispatch({
-      type:"bookList/queryMobileBook",
+      type:"searchBooks/queryMobileBook",
     })
   }
   return (
@@ -39,4 +38,4 @@ function BoolListMobilePage({ dispatch,bookList:{mobile} }: BoolListMobilePagePr
   );
 }
 
-export default connect(({bookList}:ConnectType) => ({bookList}))(BoolListMobilePage);
+export default connect(({searchBooks}:ConnectType) => ({searchBooks}))(SearchBookMobilePage);

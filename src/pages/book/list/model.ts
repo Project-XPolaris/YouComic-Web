@@ -111,11 +111,11 @@ const BookListModel: BookListModelType = {
         },
       });
     },
-    *queryMobileBook({payload:{page}},{call,put,select}){
+    *queryMobileBook(_,{call,put,select}){
       const bookListState : BookListModelStateType = yield select((state: ConnectType) => (state.bookList));
-      const {mobile:{pageSize},order,startTime,endTime} = bookListState
+      const {mobile:{pageSize,page},order,startTime,endTime} = bookListState
       const queryBookResponse: ListQueryContainer<Book> = yield call(queryBooks, {
-        page:bookListState.mobile.page + 1,
+        page:page + 1,
         page_size: pageSize,
         order : encodeOrderToUrl(order),
         startTime,

@@ -7,24 +7,19 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Avatar, CssBaseline, withWidth,isWidthDown } from '@material-ui/core';
+import { Avatar, CssBaseline, isWidthDown, withWidth } from '@material-ui/core';
 import ApplicationDrawer from '@/layouts/components/ApplicationDrawer';
 import { UserStateType } from '@/models/user';
-import { blue } from '@material-ui/core/colors';
 import UserCard from '@/layouts/components/UserCardPopover/UserCard';
 import { connect, Dispatch } from 'dva';
 import router from 'umi/router';
-import BooksTool from '@/layouts/components/ApplicationHeaderBar/components/BooksTool';
 import SearchInput from '@/layouts/components/SearchInput';
-import SearchBar from '@/layouts/components/ApplicationHeaderBar/components/SearchBar';
-import { Moment } from 'moment';
 import SearchBooksToolBar from '@/layouts/components/ApplicationHeaderBar/components/SearchBooksToolBar';
 import SearchTagsToolBar from '@/layouts/components/ApplicationHeaderBar/components/SearchTagsToolBar';
 import LocalSelect from '@/layouts/components/ApplicationHeaderBar/components/LocalSelect';
 import { ConnectType } from '@/global/connect';
 import { LayoutModelStateType } from '@/models/layout';
 import { BookListModelStateType } from '@/pages/book/list/model';
-import { encodeOrderToUrl, updateQueryParamAndReplaceURL } from '@/util/url';
 import BookListTool from '@/layouts/components/ApplicationHeaderBar/components/BookListTool';
 
 const drawerWidth = 240;
@@ -76,8 +71,8 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: 0,
     },
     avatar: {
-      color: theme.palette.getContrastText(theme.palette.secondary.main),
-      backgroundColor: theme.palette.secondary.main,
+      color: "#FFF",
+      backgroundColor: theme.palette.primary.dark,
     },
   }),
 );

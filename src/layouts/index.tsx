@@ -11,17 +11,9 @@ import { Breakpoint } from '@material-ui/core/styles/createBreakpoints';
 import { UserStateType } from '@/models/user';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
+import ThemeLayout from '@/layouts/ThemeLayout';
 
-const outerTheme = createMuiTheme({
-  palette: {
-    primary: {
-      main: blue[500],
-    },
-    secondary: {
-      main: orange[500],
-    },
-  },
-});
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -68,14 +60,14 @@ const BasicLayout = ({
   };
   const { isDrawerOpen } = layout;
   return (
-    <ThemeProvider theme={outerTheme}>
+    <ThemeLayout>
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <ApplicationHeaderBar
           child={content}
           location={location}
         />
       </MuiPickersUtilsProvider>
-    </ThemeProvider>
+    </ThemeLayout>
   );
 };
 

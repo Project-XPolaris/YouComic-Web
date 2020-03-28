@@ -1,12 +1,12 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect, Dispatch } from 'dva';
-import { Box, Button, Input, Paper, TextField } from '@material-ui/core';
+import { Box, Button, isWidthDown, Paper, TextField, withWidth } from '@material-ui/core';
 import { Controller, useForm } from 'react-hook-form';
-import { Simulate } from 'react-dom/test-utils';
-import submit = Simulate.submit;
 import { ConnectType } from '@/global/connect';
 import { LoginModelStateType } from '@/pages/user/login/model';
+import LoginMobilePage from '@/pages/user/login/mobile';
+import ThemeLayout from '@/layouts/ThemeLayout';
 
 
 const useStyles = makeStyles({
@@ -57,16 +57,24 @@ const useStyles = makeStyles({
 
 interface LoginPagePropsType {
   dispatch: Dispatch,
-  login:LoginModelStateType
+  login:LoginModelStateType,
+  width:any
 }
 
-function LoginPage({ dispatch }: LoginPagePropsType) {
+function LoginPage({ dispatch,width }: LoginPagePropsType) {
   const classes = useStyles();
   const { control, handleSubmit } = useForm();
   const onSubmit = ({username,password}:{username:string,password:string}) => dispatch({type:"login/login",payload:{username,password}});
+  if (isWidthDown("md",width)){
+    return (
+      <LoginMobilePage />
+    )
+  }
   return (
+    <ThemeLayout>
     <div className={classes.main}>
       <div className={classes.gapArea}/>
+      <div>
       <Paper className={classes.loginContainer} elevation={0}>
         <div className={classes.loginContent}>
           <Box fontWeight="fontWeightBold" fontSize={'h5.fontSize'}>You Comic</Box>
@@ -101,8 +109,10 @@ function LoginPage({ dispatch }: LoginPagePropsType) {
           </form>
         </div>
       </Paper>
+      </div>
     </div>
+    </ThemeLayout>
   );
 }
 
-export default connect(({login}:ConnectType) => ({login}))(LoginPage);
+export default connect(({login}:ConnectType) => ({login}))(withWidth()(LoginPage));

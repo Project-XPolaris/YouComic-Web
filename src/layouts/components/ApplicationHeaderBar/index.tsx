@@ -153,6 +153,7 @@ const ApplicationHeaderBar = (
             You Comic
           </Typography>
           <SearchInput/>
+          <LocalSelect/>
           <UserCard onClose={onUserCardClose} anchor={userMenuAnchor} onLogout={onUserLogout} nickname={user.nickname}/>
           {nickname ? <IconButton
             aria-label="account of current user"
@@ -166,7 +167,6 @@ const ApplicationHeaderBar = (
 
           </IconButton> : <Button color="inherit" onClick={onLoginClick}>Login</Button>
           }
-          <LocalSelect/>
         </Toolbar>
         {location.pathname === "/books" && <BookListTool />}
         {location.pathname.match(/\/search\/.*?\/books$/) && <SearchBooksToolBar/>}

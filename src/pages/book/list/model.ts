@@ -60,7 +60,7 @@ const BookListModel: BookListModelType = {
       page:0,
       pageSize:10,
       count:0,
-      hasMore:true
+      hasMore:false
     }
   },
   subscriptions: {

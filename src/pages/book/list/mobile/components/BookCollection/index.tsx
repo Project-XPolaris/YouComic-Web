@@ -34,8 +34,7 @@ export default function BookCollection({ books = [],onLoadMore,hasMore}: BookCol
           books.map(book => {
             const { series, author, theme } = getBookTagInfo(book);
             return (
-              <div className={classes.item}>
-
+              <div className={classes.item} key={book.id}>
                 <BookCard
                   title={book.name}
                   link={`/book/${book.id}`}

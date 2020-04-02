@@ -25,7 +25,7 @@ function SearchPage({ dispatch, layout, search,width }: SearchPagePropsType) {
   const { summaryBooks, summaryCollections } = search;
   const { artist, theme, series } = search.summaryTags;
   const onShowMoreBook = () => {
-    router.push(`/search/${search.searchKey}/books`);
+    router.push(`/books?nameSearch=${search.searchKey}`);
   };
   const onShowMoreTags = () => {
     router.push(`/search/${search.searchKey}/tags`);

@@ -16,6 +16,7 @@ export interface BookListModelStateType {
   startTime?: string,
   endTime?: string,
   timeRange?:string
+  nameSearch?:string
   mobile:{
     books:[]
     page:number
@@ -34,6 +35,7 @@ export interface BookListModelType {
     setTimeRange: Reducer
     onQueryMobileBookSuccess:Reducer
     clearLoadMore:Reducer
+    setNameSearch:Reducer
   }
   state: BookListModelStateType
   effects: {
@@ -87,6 +89,12 @@ const BookListModel: BookListModelType = {
             }
           })
           dispatch({
+            type:"setNameSearch",
+            payload:{
+              nameSearch:location.query.nameSearch
+            }
+          })
+          dispatch({
             type:"clearLoadMore"
           })
           dispatch({
@@ -98,9 +106,14 @@ const BookListModel: BookListModelType = {
   },
   effects: {
     * queryBooks({ payload }, { call, put, select }) {
-      const { page, pageSize, order, startTime, endTime } = yield select((state: ConnectType) => (state.bookList));
+      const { page, pageSize, order, startTime, endTime,nameSearch } = yield select((state: ConnectType) => (state.bookList));
       const queryBookResponse: ListQueryContainer<Book> = yield call(queryBooks, {
-        page, page_size: pageSize, order:encodeOrderToUrl(order), startTime, endTime,
+        page,
+        page_size: pageSize,
+        order:encodeOrderToUrl(order),
+        startTime,
+        endTime,
+        nameSearch
       });
       queryBookResponse.result.forEach(book => book.cover = getCoverThumbnailURL(book.cover));
       yield put({
@@ -113,13 +126,14 @@ const BookListModel: BookListModelType = {
     },
     *queryMobileBook(_,{call,put,select}){
       const bookListState : BookListModelStateType = yield select((state: ConnectType) => (state.bookList));
-      const {mobile:{pageSize,page},order,startTime,endTime} = bookListState
+      const {mobile:{pageSize,page},order,startTime,endTime,nameSearch} = bookListState
       const queryBookResponse: ListQueryContainer<Book> = yield call(queryBooks, {
         page:page + 1,
         page_size: pageSize,
         order : encodeOrderToUrl(order),
         startTime,
         endTime,
+        nameSearch
       });
       queryBookResponse.result.forEach(book => book.cover = getCoverThumbnailURL(book.cover));
 
@@ -173,6 +187,12 @@ const BookListModel: BookListModelType = {
           pageSize,
           hasMore
         }
+      }
+    },
+    setNameSearch(state,{payload:{nameSearch}}){
+      return{
+        ...state,
+        nameSearch
       }
     },
     clearLoadMore(state,_){

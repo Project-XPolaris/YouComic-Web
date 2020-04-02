@@ -24,6 +24,7 @@ interface BoolListMobilePagePropsType {
 function BoolListMobilePage({ dispatch,bookList:{mobile} }: BoolListMobilePagePropsType) {
   const classes = useStyles();
   const onLoadMore = (page:any) => {
+    console.log("loadmore")
     dispatch({
       type:"bookList/queryMobileBook",
     })
@@ -34,6 +35,7 @@ function BoolListMobilePage({ dispatch,bookList:{mobile} }: BoolListMobilePagePr
         books={mobile.books}
         onLoadMore={onLoadMore}
         hasMore={mobile.hasMore}
+
       />
     </div>
   );

@@ -1,5 +1,5 @@
 const ApplicationConfig = {
-  apiURL: 'http://localhost:8080',
+  apiURL: window.AppConfig.apiURL,
   api: {
     BooksURL: '/books',
     BookTagsURL: '/book/:id/tags',

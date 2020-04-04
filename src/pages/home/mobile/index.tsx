@@ -5,6 +5,7 @@ import BookHorizonCollection from '@/pages/home/mobile/BookHorizonCollection';
 import { HomeModelStateType } from '@/pages/home/model';
 import { ConnectType } from '@/global/connect';
 import { router } from 'umi';
+import { ScrollToTopOnMount } from '@/util/scroll';
 
 
 const useStyles = makeStyles({
@@ -30,6 +31,7 @@ function HomeMobilePage({ dispatch,home }: HomeMobilePagePropsType) {
 
   return (
     <div className={classes.main}>
+      <ScrollToTopOnMount/>
       <div className={classes.row}>
         <BookHorizonCollection books={home.books.recentAdd} title={"最近添加"} onMore={() => router.push("/books")}/>
       </div>

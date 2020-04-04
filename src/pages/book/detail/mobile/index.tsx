@@ -14,6 +14,7 @@ import moment from 'moment';
 import AddToCollectionDialog from '@/pages/book/detail/mobile/components/AddToCollectionDialog';
 import { UserStateType } from '@/models/user';
 import SelectCollectionDialog from '@/pages/book/detail/components/SelectCollectionDialog';
+import { ScrollToTopOnMount } from '@/util/scroll';
 
 
 const useStyles = makeStyles({
@@ -183,6 +184,7 @@ function BookDetailMobile({ dispatch, bookDetail: { book, tags, tagBooks,isSelec
   };
   return (
     <div className={classes.main}>
+      <ScrollToTopOnMount/>
       <SelectCollectionDialog
         isOpen={isSelectCollectionDialogOpen}
         onDialogClose={onAddToCollectionClose}

@@ -4,6 +4,7 @@ import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
 import { BookListModelStateType } from '@/pages/book/list/model';
 import BookCollection from '@/pages/book/list/mobile/components/BookCollection';
+import ScrollPositionManager from '@/util/scroll';
 
 
 const useStyles = makeStyles({
@@ -29,8 +30,10 @@ function BoolListMobilePage({ dispatch,bookList:{mobile} }: BoolListMobilePagePr
       type:"bookList/queryMobileBook",
     })
   }
+
   return (
     <div className={classes.main}>
+      <ScrollPositionManager scrollKey="book-list-mobile" />
       <BookCollection
         books={mobile.books}
         onLoadMore={onLoadMore}

@@ -26,6 +26,7 @@ import { UserStateType } from '@/models/user';
 import SideBooks from '@/pages/book/detail/components/SideBooks';
 import useStyles from '@/pages/book/detail/style';
 import BookDetailMobile from '@/pages/book/detail/mobile';
+import { ScrollToTopOnMount } from '@/util/scroll';
 
 
 interface BookDetailPropsType {
@@ -187,6 +188,7 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
   } else {
     return (
       <div className={classes.main}>
+        <ScrollToTopOnMount/>
         <SelectCollectionDialog
           isOpen={isSelectCollectionDialogOpen}
           onDialogClose={onAddToCollectionClose}

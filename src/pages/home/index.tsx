@@ -7,6 +7,7 @@ import { HomeModelStateType } from '@/pages/home/model';
 import { LayoutModelStateType } from '@/models/layout';
 import { withWidth,isWidthDown } from '@material-ui/core';
 import HomeMobilePage from '@/pages/home/mobile';
+import { ScrollToTopOnMount } from '@/util/scroll';
 
 
 interface MainPagePropsType {
@@ -26,7 +27,7 @@ function MainPage({ dispatch, home,layout:{isDrawerOpen},width }: MainPagePropsT
   }else{
     return (
       <div className={classes.main}>
-
+        <ScrollToTopOnMount/>
         {books.recentAdd &&
         <div className={classes.row}>
           <BookRowCollection title={'最近添加'} books={books.recentAdd}/>

@@ -60,7 +60,6 @@ const ReadPageModel: ReadPageModelType = {
       const { id } = yield select((state: ConnectType) => (state.bookRead));
       const queryPagesResponse: ListQueryContainer<Page> = yield call(queryPages, { book: id,page:1,pageSize:100 });
       queryPagesResponse.result = sortBy(queryPagesResponse.result, [(page: Page) => (page.order)]);
-      queryPagesResponse.result.forEach((page: Page) => page.path = `${ApplicationConfig.apiURL}${page.path}`);
       yield put({
         type: 'onQueryPagesSuccess',
         payload: {

@@ -1,18 +1,7 @@
 import React, { useState } from 'react';
 import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
-import {
-  Box,
-  Button,
-  Chip,
-  Divider,
-  Grid,
-  Paper,
-  withWidth,
-  WithWidthProps,
-  isWidthDown,
-  isWidthUp,
-} from '@material-ui/core';
+import { Box, Button, Chip, Divider, Grid, isWidthDown, Paper, withWidth, WithWidthProps } from '@material-ui/core';
 import coverImage from '../../../assets/no-cover.png';
 import BookDetailCard from '@/pages/book/detail/components/DetailBookCard';
 import { DetailModelStateType } from '@/pages/book/detail/model';
@@ -33,6 +22,7 @@ interface BookDetailPropsType {
   bookDetail: DetailModelStateType
   dispatch: Dispatch
   user: UserStateType
+  width:any
 }
 
 function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsType & WithWidthProps) {
@@ -47,7 +37,7 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
           router.push(`/tag/${tag.id}`);
         };
         return (
-          <Chip className={classes.bookTag} label={tag.name} onClick={onTagClick}/>
+          <Chip className={classes.bookTag} label={tag.name} onClick={onTagClick} key={tag.id}/>
         );
       });
 

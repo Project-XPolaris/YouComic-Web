@@ -1,5 +1,4 @@
 const ApplicationConfig = {
-  apiURL: window.AppConfig.apiURL,
   api: {
     BooksURL: '/books',
     BookTagsURL: '/book/:id/tags',

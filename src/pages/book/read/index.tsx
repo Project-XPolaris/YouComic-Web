@@ -8,6 +8,7 @@ import { AppBar, IconButton, Slide, Slider, Toolbar } from '@material-ui/core';
 import { debounce } from 'lodash';
 import { Element, scroller } from 'react-scroll';
 import JumpPageActionIcon from '@material-ui/icons/LowPriority';
+import { LayoutModelStateType } from '@/models/layout';
 
 const useStyles = makeStyles({
   main: {},
@@ -35,44 +36,66 @@ const useStyles = makeStyles({
 interface ReadPagePropsType {
   dispatch: Dispatch,
   bookRead: ReadPageModelStateType
+  layout: LayoutModelStateType
 }
 
-function ReadPage({ dispatch, bookRead }: ReadPagePropsType) {
+function ReadPage({ dispatch, bookRead, layout }: ReadPagePropsType) {
   const classes = useStyles();
   const { pages } = bookRead;
   // bottom bar show
-  let previousPosition = 0;
   const [isBottomBarShow, setIsBottomBarShow] = useState(true);
-  const [currentVisiblePage,setCurrentVisiblePage] = useState(1)
-  const [pageScrollBarValue,setPageScrollBarValue] = useState(1)
-  const pageMapping = new Map()
+  const [currentVisiblePage, setCurrentVisiblePage] = useState(1);
+  const [pageScrollBarValue, setPageScrollBarValue] = useState(1);
+  const pageMapping = new Map();
   useEffect(() => {
+    let previousPosition = 0;
     const handleScroll = debounce(() => {
       const currentScrollPos = window.pageYOffset;
       if (currentScrollPos - previousPosition < -10 && !isBottomBarShow) {
-        setIsBottomBarShow(true);
-      } else if (currentScrollPos - previousPosition > 10 && isBottomBarShow) {
-        setIsBottomBarShow(false);
+        if (!isBottomBarShow) {
+          setIsBottomBarShow(true);
+        }
+        if (layout.appBarHide) {
+          dispatch({
+            type: 'layout/setAppBarHide',
+            payload: {
+              isHide: false,
+            },
+          });
+        }
+
+      } else if (currentScrollPos - previousPosition > 10  ) {
+        if (isBottomBarShow){
+          setIsBottomBarShow(false);
+        }
+        if (!layout.appBarHide){
+          dispatch({
+            type: 'layout/setAppBarHide',
+            payload: {
+              isHide: true,
+            },
+          });
+        }
       }
       previousPosition = currentScrollPos;
 
       //check position
       //minus top value is current page on screen
-      let minIdx = 0
-      let minTop = 99999999
+      let minIdx = 0;
+      let minTop = 99999999;
       for (let entry of pageMapping.entries()) {
-        const [idx,el] = entry
-        const size = el.getBoundingClientRect().top
-        if (Math.abs(size) < minTop){
-          minTop = Math.abs(size)
-          minIdx = idx
+        const [idx, el] = entry;
+        const size = el.getBoundingClientRect().top;
+        if (Math.abs(size) < minTop) {
+          minTop = Math.abs(size);
+          minIdx = idx;
         }
       }
-      if (currentVisiblePage !== minIdx){
-        setCurrentVisiblePage(minIdx)
-        setPageScrollBarValue(minIdx)
+      if (currentVisiblePage !== minIdx) {
+        setCurrentVisiblePage(minIdx);
+        setPageScrollBarValue(minIdx);
       }
-    }, 100);
+    }, 200);
     window.addEventListener('scroll', handleScroll);
   });
   // page quick jump
@@ -87,10 +110,11 @@ function ReadPage({ dispatch, bookRead }: ReadPagePropsType) {
           <img
             src={page.path}
             className={classes.pageImg}
+            alt={`page ${idx + 1}`}
             ref={el => {
               if (!el) return;
-              if (!pageMapping.has(idx)){
-                pageMapping.set(idx + 1,el)
+              if (!pageMapping.has(idx)) {
+                pageMapping.set(idx + 1, el);
               }
             }}
           />
@@ -100,12 +124,15 @@ function ReadPage({ dispatch, bookRead }: ReadPagePropsType) {
       return undefined;
     }
   };
-  const handlePageSliderChange = (event, newValue) => {
+  const handlePageSliderChange = (event:any, newValue:any) => {
     scroller.scrollTo(`page_${newValue}`, {
       duration: 1000,
       smooth: true,
     });
   };
+  const onSliderChange = (e:any,value:any) => {
+    setPageScrollBarValue(value)
+  }
   return (
     <React.Fragment>
       <div
@@ -123,12 +150,12 @@ function ReadPage({ dispatch, bookRead }: ReadPagePropsType) {
               max={pages ? pages.length : 0}
               valueLabelDisplay="auto"
               value={pageScrollBarValue}
-              onChange={(e,value) => setPageScrollBarValue(value)}
+              onChange={onSliderChange}
               onChangeCommitted={handlePageSliderChange}
             />
           </div>
           <Toolbar>
-            <IconButton edge="start" color="inherit" >
+            <IconButton edge="start" color="inherit">
               <JumpPageActionIcon/>
             </IconButton>
           </Toolbar>
@@ -138,4 +165,4 @@ function ReadPage({ dispatch, bookRead }: ReadPagePropsType) {
   );
 }
 
-export default connect(({ bookRead }: ConnectType) => ({ bookRead }))(ReadPage);
+export default connect(({ bookRead, layout }: ConnectType) => ({ bookRead, layout }))(ReadPage);

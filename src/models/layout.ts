@@ -7,6 +7,7 @@ export interface LayoutModelStateType {
   drawerMode: 'normal' | 'collection'
   currentCollectionId: number,
   isDrawerOpen:boolean,
+  appBarHide:boolean
 }
 
 export interface LayoutModelType {
@@ -15,6 +16,7 @@ export interface LayoutModelType {
     changeDrawerMode: Reducer
     changeCollectionItem: Reducer
     setDrawerOpen:Reducer
+    setAppBarHide:Reducer
   }
   state: LayoutModelStateType
   effects: {}
@@ -34,7 +36,8 @@ const LayoutModel: LayoutModelType = {
       } else {
         return false;
       }
-    })(isMobile(window.navigator.userAgent))
+    })(isMobile(window.navigator.userAgent)),
+    appBarHide:false
   },
   subscriptions: {
     'setup'({ dispatch, history }) {
@@ -76,6 +79,12 @@ const LayoutModel: LayoutModelType = {
       return{
         ...state,
         isDrawerOpen:payload.open
+      }
+    },
+    setAppBarHide(state,{payload:{isHide}}){
+      return{
+        ...state,
+        appBarHide:isHide
       }
     }
   },

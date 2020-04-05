@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Avatar, CssBaseline, isWidthDown, withWidth } from '@material-ui/core';
+import { Avatar, CssBaseline, isWidthDown, Slide, withWidth } from '@material-ui/core';
 import ApplicationDrawer from '@/layouts/components/ApplicationDrawer';
 import { UserStateType } from '@/models/user';
 import UserCard from '@/layouts/components/UserCardPopover/UserCard';
@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
       minHeight: '100vh',
     },
     contentShift: {
-      width:"100%",
+      width: '100%',
       transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.enteringScreen,
@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: 0,
     },
     avatar: {
-      color: "#FFF",
+      color: '#FFF',
       backgroundColor: theme.palette.primary.dark,
     },
   }),
@@ -82,18 +82,18 @@ interface ApplicationHeaderBar {
   user: UserStateType,
   child: any,
   location: any,
-  layout:LayoutModelStateType,
-  width:any
-  bookList:BookListModelStateType
+  layout: LayoutModelStateType,
+  width: any
+  bookList: BookListModelStateType
 }
 
 const ApplicationHeaderBar = (
   {
-    child, location, user, dispatch,layout,width,bookList
+    child, location, user, dispatch, layout, width, bookList,
   }: ApplicationHeaderBar,
 ) => {
   const classes = useStyles();
-  const {isDrawerOpen} = layout
+  const { isDrawerOpen, appBarHide } = layout;
   const onMenuButtonClick = () => switchDrawer();
   const { nickname } = user;
   const [userMenuAnchor, setUserMenuAnchor] = useState<HTMLElement | null>(null);
@@ -121,23 +121,22 @@ const ApplicationHeaderBar = (
     router.push('/user/login');
   };
   const getAppBarClasses = () => {
-    if (isWidthDown("md",width)){
-      return classes.appBar
-    }else{
-      return clsx(classes.appBar, { [classes.appBarShift]: isDrawerOpen })
+    if (isWidthDown('md', width)) {
+      return classes.appBar;
+    } else {
+      return clsx(classes.appBar, { [classes.appBarShift]: isDrawerOpen });
     }
-  }
+  };
   const getContentClasses = () => {
-    if (isWidthDown("md",width)){
-      return classes.contentShift
-    }else{
-      return clsx(classes.content, { [classes.contentShift]: isDrawerOpen })
+    if (isWidthDown('md', width)) {
+      return classes.contentShift;
+    } else {
+      return clsx(classes.content, { [classes.contentShift]: isDrawerOpen });
     }
-  }
-  return (
+  };
 
-    <div className={classes.root}>
-      <CssBaseline/>
+  const renderAppBar = () => {
+    const appBar = (
       <AppBar className={getAppBarClasses()} elevation={0}>
         <Toolbar>
           <IconButton
@@ -154,7 +153,12 @@ const ApplicationHeaderBar = (
           </Typography>
           <SearchInput/>
           <LocalSelect/>
-          <UserCard onClose={onUserCardClose} anchor={userMenuAnchor} onLogout={onUserLogout} nickname={user.nickname}/>
+          <UserCard
+            onClose={onUserCardClose}
+            anchor={userMenuAnchor}
+            onLogout={onUserLogout}
+            nickname={user.nickname}
+          />
           {nickname ? <IconButton
             aria-label="account of current user"
             aria-controls="primary-search-account-menu"
@@ -168,10 +172,28 @@ const ApplicationHeaderBar = (
           </IconButton> : <Button color="inherit" onClick={onLoginClick}>Login</Button>
           }
         </Toolbar>
-        {location.pathname === "/books" && <BookListTool />}
+
+        {location.pathname === '/books' && <BookListTool/>}
         {location.pathname.match(/\/search\/.*?\/books$/) && <SearchBooksToolBar/>}
-        {location.pathname.match(/\/search\/.*?\/tags$/) && <SearchTagsToolBar />}
+        {location.pathname.match(/\/search\/.*?\/tags$/) && <SearchTagsToolBar/>}
       </AppBar>
+    );
+    if (location.pathname.match(/\/book\/.*?\/read$/)) {
+      return (
+        <Slide direction={'down'} in={!appBarHide}>
+          {appBar}
+        </Slide>
+      );
+    } else {
+      return appBar;
+    }
+  };
+  return (
+
+    <div className={classes.root}>
+      <CssBaseline/>
+      {renderAppBar()}
+
       <ApplicationDrawer isOpen={isDrawerOpen} location={location}/>
       <main className={getContentClasses()}>
         {child}
@@ -180,4 +202,8 @@ const ApplicationHeaderBar = (
   );
 };
 
-export default connect(({ layout, user,bookList }: ConnectType) => ({ layout, user,bookList }))(withWidth()(ApplicationHeaderBar));
+export default connect(({ layout, user, bookList }: ConnectType) => ({
+  layout,
+  user,
+  bookList,
+}))(withWidth()(ApplicationHeaderBar));

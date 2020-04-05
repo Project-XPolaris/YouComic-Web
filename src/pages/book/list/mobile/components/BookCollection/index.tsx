@@ -4,11 +4,12 @@ import { Book } from '@/services/book';
 import BookCard from '@/pages/book/list/mobile/components/BookCard';
 import { getBookTagInfo } from '@/util/book';
 import InfiniteScroll from 'react-infinite-scroller';
+import { Divider } from '@material-ui/core';
 
 const useStyles = makeStyles({
   main: {},
   item: {
-    marginBottom: 8,
+
   },
 });
 
@@ -32,7 +33,7 @@ export default function BookCollection({ books = [],onLoadMore,hasMore}: BookCol
       >
         {
           books.map(book => {
-            const { series, author, theme } = getBookTagInfo(book);
+            const { series, author } = getBookTagInfo(book);
             return (
               <div className={classes.item} key={book.id}>
                 <BookCard
@@ -42,6 +43,7 @@ export default function BookCollection({ books = [],onLoadMore,hasMore}: BookCol
                   author={author}
                   cover={book.cover}
                 />
+                <Divider />
               </div>
             );
           })

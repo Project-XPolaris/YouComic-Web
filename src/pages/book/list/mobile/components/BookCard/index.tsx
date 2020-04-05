@@ -3,21 +3,22 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import router from 'umi/router';
-import { Box } from '@material-ui/core';
+import { Box, Divider, Link } from '@material-ui/core';
 import { Tag } from '@/services/tag';
 
 const useStyles = makeStyles({
   card: {
     display: 'flex',
     maxHeight: 160,
+    background: '#FFF',
   },
   media: {
     maxHeight: 160,
-    maxWidth:110,
-    overflow:"hidden"
+    maxWidth: 110,
+    overflow: 'hidden',
   },
-  cover:{
-    maxHeight:160,
+  cover: {
+    maxHeight: 160,
   },
   title: {
     overflow: 'hidden',
@@ -36,6 +37,9 @@ const useStyles = makeStyles({
   author: {
     marginTop: 8,
     overflow: 'hidden',
+  },
+  textLink: {
+    color: '#222',
   },
 
 });
@@ -64,8 +68,23 @@ export default function BookCard({
   const onCardClick = () => {
     router.push(link);
   };
+  const onAuthorClick = () => {
+    if (author) {
+      router.push(`/tag/${author.id}`);
+    }
+  };
+  const onThemeClick = () => {
+    if (theme) {
+      router.push(`/tag/${theme.id}`);
+    }
+  };
+  const onSeriesClick = () => {
+    if (series) {
+      router.push(`/tag/${series.id}`);
+    }
+  };
   return (
-    <Card className={classes.card} square={true}>
+    <div className={classes.card}>
       <CardActionArea className={classes.media} onClick={onCardClick}>
         <img src={cover} className={classes.cover}/>
       </CardActionArea>
@@ -73,7 +92,10 @@ export default function BookCard({
         <Box
           className={classes.title}
         >
-          {title}
+          <Link onClick={onCardClick} className={classes.textLink}>
+            {title}
+          </Link>
+
         </Box>
         {
           author &&
@@ -82,10 +104,11 @@ export default function BookCard({
             fontSize="subtitle2.fontSize"
             className={classes.author}
           >
-            {author.name}
+            <Link onClick={onAuthorClick} className={classes.textLink}>
+              {author.name}
+            </Link>
           </Box>
         }
-
         {
           theme &&
           <Box
@@ -94,7 +117,9 @@ export default function BookCard({
             textOverflow="ellipsis"
             className={classes.author}
           >
-            {theme.name}
+            <Link onClick={onThemeClick} className={classes.textLink}>
+              {theme.name}
+            </Link>
           </Box>
         }
         {
@@ -105,10 +130,12 @@ export default function BookCard({
             textOverflow="ellipsis"
             className={classes.author}
           >
-            {series.name}
+            <Link onClick={onSeriesClick} className={classes.textLink}>
+              {series.name}
+            </Link>
           </Box>
         }
       </div>
-    </Card>
+    </div>
   );
 }

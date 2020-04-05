@@ -4,13 +4,13 @@ import { ConnectType } from '@/global/connect';
 import { Page, queryPages } from '@/services/page';
 import { ListQueryContainer } from '@/services/base';
 import { sortBy } from 'lodash';
-import ApplicationConfig from '@/config';
 
 const pathToRegexp = require('path-to-regexp');
 
 export interface ReadPageModelStateType {
   id: number,
-  pages?:Page[]
+  pages?: Page[]
+  count:number
 }
 
 export interface ReadPageModelType {
@@ -32,6 +32,7 @@ const ReadPageModel: ReadPageModelType = {
   namespace: 'bookRead',
   state: {
     id: 0,
+    count:0
   },
   subscriptions: {
     'setup'({ dispatch, history }) {
@@ -58,12 +59,17 @@ const ReadPageModel: ReadPageModelType = {
   effects: {
     * queryPages(state, { call, put, select }) {
       const { id } = yield select((state: ConnectType) => (state.bookRead));
-      const queryPagesResponse: ListQueryContainer<Page> = yield call(queryPages, { book: id,page:1,pageSize:100 });
+      const queryPagesResponse: ListQueryContainer<Page> = yield call(queryPages, {
+        book: id,
+        page: 1,
+        pageSize: 1000,
+      });
       queryPagesResponse.result = sortBy(queryPagesResponse.result, [(page: Page) => (page.order)]);
       yield put({
         type: 'onQueryPagesSuccess',
         payload: {
           pages: queryPagesResponse.result,
+          count: queryPagesResponse.count,
         },
       });
     },
@@ -79,6 +85,7 @@ const ReadPageModel: ReadPageModelType = {
       return {
         ...state,
         pages: payload.pages,
+        count: payload.count,
       };
     },
   },

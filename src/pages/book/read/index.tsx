@@ -4,20 +4,30 @@ import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
 import { ReadPageModelStateType } from '@/pages/book/read/model';
 import { Page } from '@/services/page';
-import { AppBar, IconButton, Slide, Slider, Toolbar } from '@material-ui/core';
-import { debounce } from 'lodash';
-import { Element, scroller } from 'react-scroll';
+import { AppBar, Divider, IconButton, Slide, Slider, Toolbar } from '@material-ui/core';
 import JumpPageActionIcon from '@material-ui/icons/LowPriority';
 import { LayoutModelStateType } from '@/models/layout';
+import StatusBar from '@/pages/book/read/components/StatusBar';
+import { Element, scroller } from 'react-scroll';
+import { useDoubleTap } from '@/util/click';
 
 const useStyles = makeStyles({
-  main: {},
+  main: {
+    backgroundColor:"#EEE"
+  },
   pageImg: {
     width: '100%',
+    marginBottom:8
   },
   appBar: {
     top: 'auto',
     bottom: 0,
+  },
+  statusBarWrap: {
+    top: 'auto',
+    bottom: 0,
+    position: 'fixed',
+    width: '100%',
   },
   grow: {
     flexGrow: 1,
@@ -39,46 +49,16 @@ interface ReadPagePropsType {
   layout: LayoutModelStateType
 }
 
-function ReadPage({ dispatch, bookRead, layout }: ReadPagePropsType) {
+function ReadPage({ dispatch, bookRead, layout:{appBarHide} }: ReadPagePropsType) {
   const classes = useStyles();
-  const { pages } = bookRead;
+  const { pages, count } = bookRead;
   // bottom bar show
-  const [isBottomBarShow, setIsBottomBarShow] = useState(true);
+  const [isBottomBarShow, setIsBottomBarShow] = useState(false);
   const [currentVisiblePage, setCurrentVisiblePage] = useState(1);
   const [pageScrollBarValue, setPageScrollBarValue] = useState(1);
   const pageMapping = new Map();
   useEffect(() => {
-    let previousPosition = 0;
-    const handleScroll = debounce(() => {
-      const currentScrollPos = window.pageYOffset;
-      if (currentScrollPos - previousPosition < -10 && !isBottomBarShow) {
-        if (!isBottomBarShow) {
-          setIsBottomBarShow(true);
-        }
-        if (layout.appBarHide) {
-          dispatch({
-            type: 'layout/setAppBarHide',
-            payload: {
-              isHide: false,
-            },
-          });
-        }
-
-      } else if (currentScrollPos - previousPosition > 10  ) {
-        if (isBottomBarShow){
-          setIsBottomBarShow(false);
-        }
-        if (!layout.appBarHide){
-          dispatch({
-            type: 'layout/setAppBarHide',
-            payload: {
-              isHide: true,
-            },
-          });
-        }
-      }
-      previousPosition = currentScrollPos;
-
+    const handleScroll = () => {
       //check position
       //minus top value is current page on screen
       let minIdx = 0;
@@ -95,8 +75,29 @@ function ReadPage({ dispatch, bookRead, layout }: ReadPagePropsType) {
         setCurrentVisiblePage(minIdx);
         setPageScrollBarValue(minIdx);
       }
-    }, 200);
+    };
     window.addEventListener('scroll', handleScroll);
+    if (!isBottomBarShow !== appBarHide){
+      dispatch({
+        type: 'layout/setAppBarHide',
+        payload: {
+          isHide: !isBottomBarShow,
+        },
+      });
+    }
+
+
+  });
+
+  const bind = useDoubleTap((event) => {
+    // Your action here
+    setIsBottomBarShow(!isBottomBarShow);
+    dispatch({
+      type: 'layout/setAppBarHide',
+      payload: {
+        isHide: isBottomBarShow,
+      },
+    });
   });
   // page quick jump
   const renderPages = () => {
@@ -105,15 +106,16 @@ function ReadPage({ dispatch, bookRead, layout }: ReadPagePropsType) {
         <Element
           name={`page_${idx + 1}`}
           key={page.id}
-
         >
           <img
             src={page.path}
+            {...bind}
+
             className={classes.pageImg}
             alt={`page ${idx + 1}`}
             ref={el => {
               if (!el) return;
-              if (!pageMapping.has(idx)) {
+              if (!pageMapping.has(idx + 1)) {
                 pageMapping.set(idx + 1, el);
               }
             }}
@@ -124,15 +126,15 @@ function ReadPage({ dispatch, bookRead, layout }: ReadPagePropsType) {
       return undefined;
     }
   };
-  const handlePageSliderChange = (event:any, newValue:any) => {
+  const handlePageSliderChange = (event: any, newValue: any) => {
     scroller.scrollTo(`page_${newValue}`, {
-      duration: 1000,
+      duration: 1,
       smooth: true,
     });
   };
-  const onSliderChange = (e:any,value:any) => {
-    setPageScrollBarValue(value)
-  }
+  const onSliderChange = (e: any, value: any) => {
+    setPageScrollBarValue(value);
+  };
   return (
     <React.Fragment>
       <div
@@ -142,7 +144,6 @@ function ReadPage({ dispatch, bookRead, layout }: ReadPagePropsType) {
         {renderPages()}
       </div>
       <Slide direction="up" in={isBottomBarShow}>
-
         <AppBar position="fixed" color="primary" className={classes.appBar}>
           <div className={classes.bottomAction}>
             <Slider
@@ -161,6 +162,9 @@ function ReadPage({ dispatch, bookRead, layout }: ReadPagePropsType) {
           </Toolbar>
         </AppBar>
       </Slide>
+      <div className={classes.statusBarWrap}>
+        <StatusBar currentPage={currentVisiblePage} totalPage={count}/>
+      </div>
     </React.Fragment>
   );
 }

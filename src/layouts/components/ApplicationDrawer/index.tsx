@@ -20,6 +20,7 @@ import ApplicationDrawerCollection from '@/layouts/components/ApplicationDrawer/
 import AppsIcon from '@material-ui/icons/Apps';
 // @ts-ignore
 import { formatMessage } from 'umi/locale';
+import isMobile from 'ismobilejs';
 
 const drawerWidth = 240;
 
@@ -120,7 +121,17 @@ const ApplicationDrawer = ({
       if (item.needLogin && !user.id) {
         return undefined;
       }
-      const onNavigationItemClick = () => router.push(item.link);
+      const onNavigationItemClick = () => {
+        if (isMobile(window.navigator.userAgent)){
+          dispatch({
+            type:"layout/setDrawerOpen",
+            payload:{
+              isOpen:false
+            }
+          })
+        }
+        router.push(item.link)
+      };
       return (
         <ListItem button={true} onClick={item.onClickItem ? item.onClickItem : onNavigationItemClick} key={item.title}>
           <ListItemIcon>

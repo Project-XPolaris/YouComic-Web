@@ -71,7 +71,7 @@ apiRequest.use(async (ctx, next) => {
   [
     bookListPostProcess,
     pageListPostProcess,
-    tagBooksPostProcess
+    tagBooksPostProcess,
   ].forEach(process => {
       const pathname = URI(ctx.req.url).pathname();
       const regexp = pathToRegexp(process.regex);
@@ -87,7 +87,7 @@ apiRequest.interceptors.request.use((url, options) => {
   return (
     {
       url,
-      options: { ...options, credentials: 'same-origin' },
+      options: { ...options, mode: 'cors' },
     }
   );
 }, { global: true });
@@ -98,6 +98,7 @@ apiRequest.interceptors.request.use((url, options) => {
     headers = {
       ...options.headers,
       'Authorization': token,
+      'Access-Control-Allow-Origin': '*',
     };
   }
   return {
@@ -126,3 +127,18 @@ apiRequest.interceptors.request.use((url, options) => {
   };
 }, { global: true });
 export default apiRequest;
+
+export const imageRequest = extend({});
+
+imageRequest.use(async (ctx, next) => {
+  let  token = ""
+  token = localStorage.getItem('youcomic_token');
+  ctx.req.options.headers = {
+    ...ctx.req.options.headers,
+    "Authorization":token
+  }
+  ctx.req.options.responseType = "blob"
+  await next();
+});
+
+

@@ -16,13 +16,14 @@ import SideBooks from '@/pages/book/detail/components/SideBooks';
 import useStyles from '@/pages/book/detail/style';
 import BookDetailMobile from '@/pages/book/detail/mobile';
 import { ScrollToTopOnMount } from '@/util/scroll';
+import ImageLoader from '@/components/ImageLoader';
 
 
 interface BookDetailPropsType {
   bookDetail: DetailModelStateType
   dispatch: Dispatch
   user: UserStateType
-  width:any
+  width: any
 }
 
 function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsType & WithWidthProps) {
@@ -189,7 +190,9 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
           <Paper square={true} className={classes.mainContent}>
             <div className={classes.contentHeader}>
               <Box boxShadow={1} className={classes.coverWarp}>
-                <img src={book?.cover || coverImage} className={classes.cover}/>
+                {
+                  book?.cover && <ImageLoader className={classes.cover} url={book.cover}/>
+                }
               </Box>
               <div className={classes.headerInfoContainer}>
                 <Box className={classes.title}>

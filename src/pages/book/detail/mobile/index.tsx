@@ -11,7 +11,6 @@ import TitleSection from '@/pages/book/detail/mobile/components/TitleSection/Tit
 import { Book } from '@/services/book';
 import BookCollection from '@/pages/book/detail/mobile/components/BookCollection';
 import moment from 'moment';
-import AddToCollectionDialog from '@/pages/book/detail/mobile/components/AddToCollectionDialog';
 import { UserStateType } from '@/models/user';
 import SelectCollectionDialog from '@/pages/book/detail/components/SelectCollectionDialog';
 import { ScrollToTopOnMount } from '@/util/scroll';
@@ -89,6 +88,7 @@ const useStyles = makeStyles({
   bookTag: {
     marginRight: 16,
     marginBottom: 12,
+    maxWidth:"80%"
   },
 });
 

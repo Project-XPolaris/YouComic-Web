@@ -122,7 +122,7 @@ const ApplicationDrawer = ({
         return undefined;
       }
       const onNavigationItemClick = () => {
-        if (isMobile(window.navigator.userAgent)){
+        if (isMobile(window.navigator.userAgent).any){
           dispatch({
             type:"layout/setDrawerOpen",
             payload:{

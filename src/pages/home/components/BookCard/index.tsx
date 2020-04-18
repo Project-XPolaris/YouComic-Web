@@ -4,6 +4,8 @@ import { Book } from '@/services/book';
 import { Box, Card, CardActionArea, CardContent, Link } from '@material-ui/core';
 import { getBookTagInfo } from '@/util/book';
 import router from 'umi/router';
+import { imageRequest } from '@/util/request';
+import ImageLoader from '@/components/ImageLoader';
 
 
 interface BookCardPropsType {
@@ -20,7 +22,7 @@ export default function BookCard({ book }: BookCardPropsType) {
   return (
     <Card className={classes.main}>
       <CardActionArea onClick={onCardClick}>
-        <img src={book.cover} className={classes.cover}/>
+        <ImageLoader url={book.cover} className={classes.cover} />
       </CardActionArea>
       <CardContent className={classes.content}>
         <Link href={`/book/${book.id}`} className={classes.link}>

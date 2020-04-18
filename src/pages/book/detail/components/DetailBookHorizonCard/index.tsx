@@ -5,6 +5,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CoverImage from '../../../../../assets/no-cover.png';
 import router from 'umi/router';
 import { Box } from '@material-ui/core';
+import ImageLoader from '@/components/ImageLoader';
 
 const useStyles = makeStyles({
   card: {
@@ -31,6 +32,11 @@ const useStyles = makeStyles({
   author: {
     marginTop: 8,
     overflow: 'hidden',
+  },
+  series: {
+    fontSize: 12,
+    height: 16,
+    overflow:'hidden'
   },
 
 });
@@ -72,7 +78,7 @@ export default function BookDetailHorizonCard({
     <Card className={classes.card} square={true}>
       <CardActionArea className={classes.media} onClick={onCardClick}>
         <div>
-          <img src={cover || CoverImage} className={classes.media}/>
+          <ImageLoader url={cover || CoverImage} className={classes.media} />
         </div>
       </CardActionArea>
       <div className={classes.infoArea}>
@@ -83,10 +89,10 @@ export default function BookDetailHorizonCard({
         <Box fontWeight="fontWeightBold" fontSize="subtitle2.fontSize" className={classes.author}>
           {author.text}
         </Box>
-        {theme && <Box fontWeight="fontWeightLight" fontSize="caption.fontSize" textOverflow="ellipsis"
-                       className={classes.author}>{author.text}</Box>}
-        {series && <Box fontWeight="fontWeightLight" fontSize="caption.fontSize" textOverflow="ellipsis"
-                        className={classes.author}>{series.text}</Box>}
+        <div>
+          {series && <Box fontWeight="fontWeightLight" fontSize="caption.fontSize" textOverflow="ellipsis"
+                          className={classes.series}>{series.text}</Box>}
+        </div>
 
       </div>
       {/*<CardContent>*/}

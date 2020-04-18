@@ -7,6 +7,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import CoverImage from '../../../../../assets/no-cover.png';
 import router from 'umi/router';
+import ImageLoader from '@/components/ImageLoader';
 
 const useStyles = makeStyles({
   card: {
@@ -59,11 +60,7 @@ export default function BookDetailCard({
   return (
     <Card className={classes.card} elevation={0}>
       <CardActionArea onClick={onCardClick}>
-        <CardMedia
-          className={classes.media}
-          image={cover || CoverImage}
-          title={title || '未知'}
-        />
+        <ImageLoader className={classes.media} url={cover || CoverImage} />
       </CardActionArea>
       <CardContent>
         <Typography gutterBottom={true} noWrap={true} variant="subtitle2" component="h2" className={classes.title}>

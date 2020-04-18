@@ -103,25 +103,6 @@ function BookListPage({ dispatch, bookList, layout, width }: BookListPropsType) 
     } : undefined)(book.tags.find(tag => tag.type === 'series')),
     link: `/book/${book.id}`,
   }));
-
-  const onPaginationChange = (page = bookList.page, pageSize = bookList.pageSize) => {
-    dispatch({
-      type: 'bookList/setPage',
-      payload: {
-        page,
-        pageSize,
-      },
-    });
-    dispatch({
-      type: 'bookList/queryBooks',
-    });
-  };
-  const onNextPage = () => {
-    onPaginationChange(bookList.page + 1);
-  };
-  const onPrevious = () => {
-    onPaginationChange(bookList.page - 1);
-  };
   const onSelectPage = (page: number) => {
     updateQueryParamAndReplaceURL({
       page

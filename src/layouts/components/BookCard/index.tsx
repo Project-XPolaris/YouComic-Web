@@ -7,17 +7,18 @@ import Typography from '@material-ui/core/Typography';
 import CoverImage from '../../../assets/no-cover.png';
 import router from 'umi/router';
 import { Box } from '@material-ui/core';
+import ImageLoader from '@/components/ImageLoader';
 
-const useStyles = makeStyles((theme:Theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   card: {
-    maxWidth:theme.spacing(16),
-    minHeight:theme.spacing(38)
+    maxWidth: theme.spacing(16),
+    minHeight: theme.spacing(38),
   },
-  media:{
-    maxHeight:theme.spacing(24)
+  media: {
+    maxHeight: theme.spacing(24),
   },
   title: {
-    maxWidth: theme.spacing(16)
+    maxWidth: theme.spacing(16),
   },
   meta: {
     marginTop: 8,
@@ -60,20 +61,19 @@ export default function BookCard({
   return (
     <Card className={classes.card} square={true}>
       <CardActionArea onClick={onCardClick}>
-        <img src={cover || CoverImage} className={classes.media} />
-
+        <ImageLoader url={cover} className={classes.media}/>
       </CardActionArea>
       <CardContent>
 
         <Typography gutterBottom={true} noWrap={true} variant="subtitle2" component="h2" className={classes.title}>
-          <Box fontWeight="fontWeightLight" fontSize={14} color={"#333"}>
+          <Box fontWeight="fontWeightLight" fontSize={14} color={'#333'}>
             {title}
           </Box>
         </Typography>
 
         <Typography variant="body2" noWrap={true} color="textPrimary" component="p">
-          <Box fontWeight="fontWeightLight" fontSize={12} color={"#333"}>
-          {author.text}
+          <Box fontWeight="fontWeightLight" fontSize={12} color={'#333'}>
+            {author.text}
           </Box>
         </Typography>
         {theme && <Typography noWrap={true} variant="body2" color="textSecondary" component="p"

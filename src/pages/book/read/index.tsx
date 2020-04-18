@@ -10,14 +10,15 @@ import { LayoutModelStateType } from '@/models/layout';
 import StatusBar from '@/pages/book/read/components/StatusBar';
 import { Element, scroller } from 'react-scroll';
 import { useDoubleTap } from '@/util/click';
+import ImageLoader from '@/components/ImageLoader';
 
 const useStyles = makeStyles({
   main: {
-    backgroundColor:"#EEE"
+    backgroundColor: '#EEE',
   },
   pageImg: {
     width: '100%',
-    marginBottom:8
+    marginBottom: 8,
   },
   appBar: {
     top: 'auto',
@@ -49,7 +50,7 @@ interface ReadPagePropsType {
   layout: LayoutModelStateType
 }
 
-function ReadPage({ dispatch, bookRead, layout:{appBarHide} }: ReadPagePropsType) {
+function ReadPage({ dispatch, bookRead, layout: { appBarHide } }: ReadPagePropsType) {
   const classes = useStyles();
   const { pages, count } = bookRead;
   // bottom bar show
@@ -77,7 +78,7 @@ function ReadPage({ dispatch, bookRead, layout:{appBarHide} }: ReadPagePropsType
       }
     };
     window.addEventListener('scroll', handleScroll);
-    if (!isBottomBarShow !== appBarHide){
+    if (!isBottomBarShow !== appBarHide) {
       dispatch({
         type: 'layout/setAppBarHide',
         payload: {
@@ -85,8 +86,6 @@ function ReadPage({ dispatch, bookRead, layout:{appBarHide} }: ReadPagePropsType
         },
       });
     }
-
-
   });
 
   const bind = useDoubleTap((event) => {
@@ -107,19 +106,20 @@ function ReadPage({ dispatch, bookRead, layout:{appBarHide} }: ReadPagePropsType
           name={`page_${idx + 1}`}
           key={page.id}
         >
-          <img
-            src={page.path}
-            {...bind}
+          <div ref={(el: any) => {
+            if (!el) return;
+            if (!pageMapping.has(idx + 1)) {
+              pageMapping.set(idx + 1, el);
+            }
+          }}>
+            <ImageLoader
+              url={page.path}
+              {...bind}
+              className={classes.pageImg}
+              alt={`page ${idx + 1}`}
 
-            className={classes.pageImg}
-            alt={`page ${idx + 1}`}
-            ref={el => {
-              if (!el) return;
-              if (!pageMapping.has(idx + 1)) {
-                pageMapping.set(idx + 1, el);
-              }
-            }}
-          />
+            />
+          </div>
         </Element>
       ));
     } else {

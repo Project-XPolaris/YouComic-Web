@@ -25,6 +25,7 @@ export interface DetailModelType {
     onQueryBookTagsSuccess: Reducer
     onQueryTagBooksSuccess: Reducer
     setSelectCollectionOpen: Reducer
+    reload: Reducer
   }
   state: DetailModelStateType
   effects: {
@@ -51,6 +52,12 @@ const DetailModel: DetailModelType = {
         const regexp = pathToRegexp('/book/:bookId(\\d+)');
         const match = regexp.exec(location.pathname);
         if (match) {
+          dispatch({
+            type:"reload",
+            payload:{
+
+            }
+          })
           dispatch({
             type: 'setBookId',
             payload: {
@@ -153,6 +160,13 @@ const DetailModel: DetailModelType = {
       return {
         ...state,
         isSelectCollectionDialogOpen: payload.open,
+      };
+    },
+    reload(state, _) {
+      return {
+        id: 0,
+        tagBooks: {},
+        isSelectCollectionDialogOpen: false,
       };
     },
   },

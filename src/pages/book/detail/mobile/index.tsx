@@ -14,6 +14,7 @@ import moment from 'moment';
 import { UserStateType } from '@/models/user';
 import SelectCollectionDialog from '@/pages/book/detail/components/SelectCollectionDialog';
 import { ScrollToTopOnMount } from '@/util/scroll';
+import ImageLoader from '@/components/ImageLoader';
 
 
 const useStyles = makeStyles({
@@ -195,7 +196,9 @@ function BookDetailMobile({ dispatch, bookDetail: { book, tags, tagBooks,isSelec
         book &&
         <div className={classes.content}>
           <div className={classes.header}>
-            <img src={book.cover} className={classes.cover}/>
+            {
+               <ImageLoader className={classes.cover} url={book.cover}/>
+            }
             <div className={classes.headerRight}>
               <div className={classes.title}>
                 {book.name}

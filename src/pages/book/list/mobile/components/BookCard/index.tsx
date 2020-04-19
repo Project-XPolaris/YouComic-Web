@@ -5,6 +5,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import router from 'umi/router';
 import { Box, Divider, Link } from '@material-ui/core';
 import { Tag } from '@/services/tag';
+import ImageLoader from '@/components/ImageLoader';
 
 const useStyles = makeStyles({
   card: {
@@ -86,7 +87,7 @@ export default function BookCard({
   return (
     <div className={classes.card}>
       <CardActionArea className={classes.media} onClick={onCardClick}>
-        <img src={cover} className={classes.cover}/>
+        <ImageLoader className={classes.cover} url={cover} />
       </CardActionArea>
       <div className={classes.infoArea}>
         <Box

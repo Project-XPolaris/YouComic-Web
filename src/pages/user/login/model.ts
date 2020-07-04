@@ -1,7 +1,7 @@
-import { Effect, Subscription } from 'dva';
+import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { getAuth, UserAuth } from '@/services/user';
-import router from 'umi/router';
+import { history } from '@@/core/umiExports';
 
 export interface LoginModelStateType {
 }
@@ -24,15 +24,19 @@ const LoginModel: LoginModelType = {
   subscriptions: {},
   effects: {
     * login({ payload: { username, password } }, { call, put }) {
+      console.log(username, password);
       const authResponse: UserAuth = yield call(getAuth, { username, password });
-      yield put({
-        type: 'onLoginSuccess',
-        payload: authResponse,
-      });
-      yield put({
-        type:"user/refreshUser"
-      })
-      router.push('/');
+      console.log(authResponse);
+      if (authResponse['sign']) {
+        yield put({
+          type: 'onLoginSuccess',
+          payload: authResponse,
+        });
+        yield put({
+          type: 'user/refreshUser',
+        });
+        history.push('/');
+      }
     },
   },
   reducers: {

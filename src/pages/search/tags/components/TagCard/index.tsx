@@ -1,9 +1,8 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import useStyles from './style';
 import { Box, Card, CardActionArea } from '@material-ui/core';
 import { Tag } from '@/services/tag';
-import { router } from 'umi';
+import { history } from '@@/core/umiExports';
 
 interface TagCardPropsType {
   tag: Tag
@@ -13,10 +12,10 @@ interface TagCardPropsType {
 export default function TagCard({ tag }: TagCardPropsType) {
   const classes = useStyles();
   const onCardClick = () => {
-    router.push(`/tag/${tag.id}`);
+    history.push(`/tag/${tag.id}`);
   };
   return (
-    <Card >
+    <Card>
       <CardActionArea onClick={onCardClick} className={classes.main}>
         <Box fontSize="h6.fontSize">
           {tag.name}

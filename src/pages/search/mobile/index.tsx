@@ -2,8 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
-import BookCollection from '@/layouts/components/BookCollection';
-import BookRowCollection from '@/pages/home/components/BookRowCollection';
 import { SearchModelStateType } from '@/pages/search/model';
 import BookHorizonCollection from '@/pages/home/mobile/BookHorizonCollection';
 import MobileRow from '@/components/MobileRow';
@@ -11,8 +9,7 @@ import MobileChipCollection from '@/components/MobileChipCollection';
 import AuthorIcon from '@material-ui/icons/Person';
 import SeriesIcon from '@material-ui/icons/Book';
 import ThemeIcon from '@material-ui/icons/Star';
-import { router } from 'umi';
-import { isWidthDown } from '@material-ui/core';
+import { history } from '@@/core/umiExports';
 
 
 const useStyles = makeStyles(theme => ({
@@ -34,9 +31,9 @@ interface SearchMobilePagePropsType {
 
 function SearchMobilePage({ dispatch, search }: SearchMobilePagePropsType) {
   const classes = useStyles();
-  const { summaryBooks, summaryCollections } = search;
+  const { summaryBooks } = search;
   const onShowMoreBook = () => {
-    router.push(`/search/${search.searchKey}/books`);
+    history.push(`/search/${search.searchKey}/books`);
   };
   return (
     <div className={classes.main}>
@@ -59,7 +56,7 @@ function SearchMobilePage({ dispatch, search }: SearchMobilePagePropsType) {
                 search.summaryTags.artist?.map(tag => {
                   return {
                     text: tag.name,
-                    onChipClick: () => router.push(`/tag/${tag.id}`),
+                    onChipClick: () => history.push(`/tag/${tag.id}`),
                     color: 'primary',
                     icon: <AuthorIcon/>,
                   };
@@ -78,7 +75,7 @@ function SearchMobilePage({ dispatch, search }: SearchMobilePagePropsType) {
                 search.summaryTags.series?.map(tag => {
                   return {
                     text: tag.name,
-                    onChipClick: () => router.push(`/tag/${tag.id}`),
+                    onChipClick: () => history.push(`/tag/${tag.id}`),
                     color: 'primary',
                     icon: <SeriesIcon/>,
                   };
@@ -97,7 +94,7 @@ function SearchMobilePage({ dispatch, search }: SearchMobilePagePropsType) {
                 search.summaryTags.theme?.map(tag => {
                   return {
                     text: tag.name,
-                    onChipClick: () => router.push(`/tag/${tag.id}`),
+                    onChipClick: () => history.push(`/tag/${tag.id}`),
                     color: 'primary',
                     icon: <ThemeIcon/>,
                   };

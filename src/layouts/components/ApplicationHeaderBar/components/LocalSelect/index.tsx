@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import LocalIcon from '@material-ui/icons/Translate';
-import { setLocale } from 'umi/locale';
+import { setLocale } from '@@/plugin-locale/localeExports';
 
 const useStyles = makeStyles(theme => ({
   main: {},

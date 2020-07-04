@@ -2,7 +2,7 @@ import React, { FormEvent, useState,KeyboardEvent } from 'react';
 import useStyles from './style';
 import { InputBase } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import router from 'umi/router';
+import { history } from '@@/core/umiExports';
 
 
 interface SearchInputPropsType {
@@ -18,7 +18,7 @@ export default function SearchInput({}: SearchInputPropsType) {
   };
   const onSearchKeyPress = (e:KeyboardEvent<HTMLElement>) => {
     if (e.key === "Enter" && searchKey !== undefined && searchKey.length !== 0 && window.location.pathname !== `/search/${searchKey}`){
-      router.push(`/search/${searchKey}`)
+      history.push(`/search/${searchKey}`)
     }
   };
   return (

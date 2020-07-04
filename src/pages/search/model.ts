@@ -2,14 +2,12 @@ import { Effect, Subscription } from 'dva';
 import { Reducer } from 'redux';
 import { ConnectType } from '@/global/connect';
 import { Book, queryBooks } from '@/services/book';
-import collection from '@/layouts/components/ApplicationDrawer/collection';
 import { Collection, queryCollections } from '@/services/collection';
 import { queryTags, Tag } from '@/services/tag';
 import { ListQueryContainer } from '@/services/base';
 import { getCoverThumbnailURL } from '@/util/image';
 
-const pathToRegexp = require('path-to-regexp');
-
+const { pathToRegexp } = require("path-to-regexp");
 export interface SearchModelStateType {
   searchKey?: string
   summaryBooks?: Book[]

@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
 import { Box, Button, Chip, Divider, Grid, isWidthDown, Paper, withWidth, WithWidthProps } from '@material-ui/core';
-import coverImage from '../../../assets/no-cover.png';
 import BookDetailCard from '@/pages/book/detail/components/DetailBookCard';
 import { DetailModelStateType } from '@/pages/book/detail/model';
 import moment from 'moment';
 import { Tag } from '@/services/tag';
 import { Book } from '@/services/book';
 import { getBookTagInfo } from '@/util/book';
-import router from 'umi/router';
 import SelectCollectionDialog from '@/pages/book/detail/components/SelectCollectionDialog';
 import { UserStateType } from '@/models/user';
 import SideBooks from '@/pages/book/detail/components/SideBooks';
@@ -17,6 +15,7 @@ import useStyles from '@/pages/book/detail/style';
 import BookDetailMobile from '@/pages/book/detail/mobile';
 import { ScrollToTopOnMount } from '@/util/scroll';
 import ImageLoader from '@/components/ImageLoader';
+import { history } from '@@/core/umiExports';
 
 
 interface BookDetailPropsType {
@@ -35,7 +34,7 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
     if (tags) {
       return tags.map((tag: Tag) => {
         const onTagClick = () => {
-          router.push(`/tag/${tag.id}`);
+          history.push(`/tag/${tag.id}`);
         };
         return (
           <Chip className={classes.bookTag} label={tag.name} onClick={onTagClick} key={tag.id}/>
@@ -108,7 +107,7 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
   }
   const onReadButtonClick = () => {
     if (book) {
-      router.push(`/book/${book.id}/read`);
+      history.push(`/book/${book.id}/read`);
     }
   };
   const onAddToCollectionButton = () => {
@@ -120,7 +119,7 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
         },
       });
     } else {
-      router.push('/user/login');
+      history.push('/user/login');
     }
 
   };
@@ -142,13 +141,13 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
   };
   const onSeeMoreThemeClick = () => {
     if (theme) {
-      router.push(`/tag/${theme.id}`);
+      history.push(`/tag/${theme.id}`);
     }
 
   };
   const onSeeMoreSeriesClick = () => {
     if (series) {
-      router.push(`/tag/${series.id}`);
+      history.push(`/tag/${series.id}`);
     }
 
   };
@@ -191,7 +190,8 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
             <div className={classes.contentHeader}>
               <Box boxShadow={1} className={classes.coverWarp}>
                 {
-                  book?.cover && <ImageLoader className={classes.cover} url={book.cover}/>
+                  book?.cover &&
+                  <ImageLoader className={classes.cover} url={book.cover}/>
                 }
               </Box>
               <div className={classes.headerInfoContainer}>

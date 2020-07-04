@@ -6,8 +6,7 @@ import { queryTags, Tag } from '@/services/tag';
 import { Book, queryBooks } from '@/services/book';
 import { getCoverThumbnailURL, getImageURL } from '@/util/image';
 
-const pathToRegexp = require('path-to-regexp');
-
+const { pathToRegexp } = require("path-to-regexp");
 export interface TagDetailModelStateType {
   id: number
   page: number

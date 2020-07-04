@@ -12,12 +12,13 @@ export interface User {
   avatar: string
 }
 
-export function getAuth({ username, password }: { username: string, password: string }) {
-  return apiRequest.post(
+export async function getAuth({ username, password }: { username: string, password: string }) {
+  const r = await apiRequest.post(
     ApplicationConfig.api.auth, {
       data: { username, password },
     },
   );
+  return r
 }
 
 export function getUser({ id }: { id: number }) {

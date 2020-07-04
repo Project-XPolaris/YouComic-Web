@@ -1,6 +1,3 @@
-import { Effect, Subscription } from 'dva';
-import { Reducer } from 'redux';
-
 export interface RegisterModelStateType {
 }
 

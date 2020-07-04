@@ -2,17 +2,14 @@ import { Effect, Subscription } from 'dva';
 import { Reducer } from 'redux';
 import { decodeJwtSign } from '@/util/jwt';
 import { ConnectType } from '@/global/connect';
-import { getUser, User } from '@/services/user';
+import { getUser, User as UserModel } from '@/services/user';
 import { ListQueryContainer } from '@/services/base';
 import {
   Collection,
-  createCollection,
-  deleteBookFromCollection,
   deleteCollection,
   queryCollections,
   removeUserFromCollection,
 } from '@/services/collection';
-import router from 'umi/router';
 
 export interface UserStateType {
   id?: number
@@ -60,7 +57,6 @@ const User: UserType = {
         yield put({
           type:"reset"
         })
-        router.push("/user/login")
         return
       }
       const claims = decodeJwtSign(userToken)
@@ -72,7 +68,7 @@ const User: UserType = {
           id:user_id
         }
       })
-      const queryUserResponse: User = yield call(getUser, { id:user_id });
+      const queryUserResponse: UserModel = yield call(getUser, { id:user_id });
       yield put({
         type: 'onRefreshUserSuccess',
         payload: {
@@ -103,7 +99,7 @@ const User: UserType = {
       });
     },
     * createCollection({ payload: { name } }, { call, put, select }) {
-      const createCollectionResponse = yield call(createCollection, { name });
+      // const createCollectionResponse = yield call(createCollection, { name });
       yield put({
         type: 'refreshUserCollections',
       });

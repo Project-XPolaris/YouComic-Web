@@ -4,8 +4,8 @@ import { connect, Dispatch } from 'dva';
 import BookHorizonCollection from '@/pages/home/mobile/BookHorizonCollection';
 import { HomeModelStateType } from '@/pages/home/model';
 import { ConnectType } from '@/global/connect';
-import { router } from 'umi';
 import { ScrollToTopOnMount } from '@/util/scroll';
+import { history } from '@@/core/umiExports';
 
 
 const useStyles = makeStyles({
@@ -33,7 +33,7 @@ function HomeMobilePage({ dispatch,home }: HomeMobilePagePropsType) {
     <div className={classes.main}>
       <ScrollToTopOnMount/>
       <div className={classes.row}>
-        <BookHorizonCollection books={home.books.recentAdd} title={"最近添加"} onMore={() => router.push("/books")}/>
+        <BookHorizonCollection books={home.books.recentAdd} title={"最近添加"} onMore={() => history.push("/books")}/>
       </div>
 
     </div>

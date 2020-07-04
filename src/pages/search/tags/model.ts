@@ -5,7 +5,7 @@ import { ConnectType } from '@/global/connect';
 import { ListQueryContainer } from '@/services/base';
 import { getPaginationFromURL } from '@/util/url';
 
-const pathToRegexp = require('path-to-regexp');
+const { pathToRegexp } = require("path-to-regexp");
 
 export interface SearchTagsModelStateType {
   tags?: Tag[]

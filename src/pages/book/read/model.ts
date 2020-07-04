@@ -5,7 +5,7 @@ import { Page, queryPages } from '@/services/page';
 import { ListQueryContainer } from '@/services/base';
 import { sortBy } from 'lodash';
 
-const pathToRegexp = require('path-to-regexp');
+const { pathToRegexp } = require("path-to-regexp");
 
 export interface ReadPageModelStateType {
   id: number,

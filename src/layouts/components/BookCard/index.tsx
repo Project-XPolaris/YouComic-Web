@@ -4,10 +4,9 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import CoverImage from '../../../assets/no-cover.png';
-import router from 'umi/router';
 import { Box } from '@material-ui/core';
 import ImageLoader from '@/components/ImageLoader';
+import { history } from '@@/core/umiExports';
 
 const useStyles = makeStyles((theme: Theme) => ({
   card: {
@@ -43,9 +42,6 @@ interface BookCardPropsType {
   link: string
 }
 
-const LoadingSkeleton = () => {
-
-};
 export default function BookCard({
                                    cover,
                                    title = '未知',
@@ -56,7 +52,7 @@ export default function BookCard({
                                  }: BookCardPropsType) {
   const classes = useStyles();
   const onCardClick = () => {
-    router.push(link);
+    history.push(link);
   };
   return (
     <Card className={classes.card} square={true}>
@@ -76,8 +72,17 @@ export default function BookCard({
             {author.text}
           </Box>
         </Typography>
-        {theme && <Typography noWrap={true} variant="body2" color="textSecondary" component="p"
-                              className={classes.meta}>{theme.text}</Typography>}
+        {theme &&
+        <Typography
+          noWrap={true}
+          variant="body2"
+          color="textSecondary"
+          component="p"
+          className={classes.meta}
+        >
+          {theme.text}
+        </Typography>
+        }
       </CardContent>
 
     </Card>

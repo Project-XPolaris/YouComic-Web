@@ -4,7 +4,7 @@ import { Book, queryBooks } from '@/services/book';
 import { ListQueryContainer } from '@/services/base';
 import { getCoverThumbnailURL } from '@/util/image';
 
-const pathToRegexp = require('path-to-regexp');
+const { pathToRegexp } = require("path-to-regexp");
 
 export interface HomeModelStateType {
   books: {

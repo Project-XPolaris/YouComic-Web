@@ -22,11 +22,6 @@ const apiRequest = extend({
   errorHandler,
 });
 
-function matchPathname(regex: string, requestUrl: string) {
-  const pathname = URI(requestUrl).pathname();
-  const regexp = pathToRegexp(regex);
-  return regexp.exec(pathname);
-}
 
 interface PathNamePostProcess<T> {
   regex: string
@@ -68,19 +63,33 @@ apiRequest.use(async (ctx, next) => {
   }
   ctx.req.url = window.apiurl + ctx.req.url;
   await next();
-  [
-    bookListPostProcess,
-    pageListPostProcess,
-    tagBooksPostProcess,
-  ].forEach(process => {
-      const pathname = URI(ctx.req.url).pathname();
-      const regexp = pathToRegexp(process.regex);
-      const match = regexp.exec(pathname);
-      if (match) {
-        process.onProcess(ctx, ctx.res);
-      }
-    },
-  );
+  // for (let process of [
+  //   bookListPostProcess,
+  //   pageListPostProcess,
+  //   tagBooksPostProcess,
+  // ]) {
+  //   const pathname = URI(ctx.req.url).pathname();
+  //   const regexp = pathToRegexp(process.regex);
+  //   const match = regexp.exec(pathname);
+  //   if (match) {
+  //     process.onProcess(ctx, ctx.res);
+  //   }
+  // }
+  const pathname = URI(ctx.req.url).pathname();
+  if (pathname === '/books') {
+    const host = 'http://' + URI(ctx.req.url).host();
+    ctx.res.result.forEach((book: any) => {
+      book.cover = host + book.cover;
+    });
+  }
+
+  if (pathname === '/pages') {
+    const host = 'http://' + URI(ctx.req.url).host();
+    ctx.res.result.forEach(page => {
+      page.path = host + page.path;
+    });
+  }
+  console.log(ctx);
 });
 apiRequest.interceptors.request.use((url, options) => {
   options.params = pickBy(options.params, (value) => typeof value !== 'undefined');
@@ -131,13 +140,13 @@ export default apiRequest;
 export const imageRequest = extend({});
 
 imageRequest.use(async (ctx, next) => {
-  let  token = ""
+  let token = '';
   token = localStorage.getItem('youcomic_token');
   ctx.req.options.headers = {
     ...ctx.req.options.headers,
-    "Authorization":token
-  }
-  ctx.req.options.responseType = "blob"
+    'Authorization': token,
+  };
+  ctx.req.options.responseType = 'blob';
   await next();
 });
 

@@ -4,7 +4,7 @@ import { Collection, queryCollections } from '@/services/collection';
 import { ConnectType } from '@/global/connect';
 import { ListQueryContainer } from '@/services/base';
 
-const pathToRegexp = require('path-to-regexp');
+const { pathToRegexp } = require("path-to-regexp");
 
 export interface SearchCollectionsModelStateType {
   collections?: Collection[]

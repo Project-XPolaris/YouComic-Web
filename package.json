@@ -33,7 +33,10 @@
     "react-infinite-scroller": "^1.2.4",
     "react-scroll": "^1.7.16",
     "umi-request": "^1.2.17",
-    "urijs": "^1.19.2"
+    "urijs": "^1.19.2",
+    "@umijs/fabric": "^2.0.5",
+    "umi": "^3.1.2",
+    "@umijs/preset-react": "^1.4.19"
   },
   "devDependencies": {
     "@types/jest": "^23.3.12",
@@ -52,10 +55,8 @@
     "react-test-renderer": "^16.7.0",
     "tslint": "^5.12.0",
     "tslint-eslint-rules": "^5.4.0",
-    "tslint-react": "^3.6.0",
-    "umi": "^2.9.0",
-    "umi-plugin-react": "^1.8.0",
-    "umi-types": "^0.3.0"
+    "tslint-react": "^3.6.0"
+
   },
   "lint-staged": {
     "*.{ts,tsx}": [

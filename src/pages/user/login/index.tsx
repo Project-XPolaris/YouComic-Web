@@ -64,7 +64,7 @@ interface LoginPagePropsType {
 function LoginPage({ dispatch,width }: LoginPagePropsType) {
   const classes = useStyles();
   const { control, handleSubmit } = useForm();
-  const onSubmit = ({username,password}:{username:string,password:string}) => dispatch({type:"login/login",payload:{username,password}});
+  const onSubmit : any = ({username,password}:{username:string,password:string}) => dispatch({type:"login/login",payload:{username,password}});
   if (isWidthDown("md",width)){
     return (
       <LoginMobilePage />

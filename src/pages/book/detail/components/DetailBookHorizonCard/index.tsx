@@ -3,9 +3,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CoverImage from '../../../../../assets/no-cover.png';
-import router from 'umi/router';
 import { Box } from '@material-ui/core';
 import ImageLoader from '@/components/ImageLoader';
+import { history } from '@@/core/umiExports';
 
 const useStyles = makeStyles({
   card: {
@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   series: {
     fontSize: 12,
     height: 16,
-    overflow:'hidden'
+    overflow: 'hidden',
   },
 
 });
@@ -58,10 +58,6 @@ interface BookDetailHorizonCardPropsType {
   }
   link: string
 }
-
-const LoadingSkeleton = () => {
-
-};
 export default function BookDetailHorizonCard({
                                                 cover,
                                                 title = '未知',
@@ -72,26 +68,37 @@ export default function BookDetailHorizonCard({
                                               }: BookDetailHorizonCardPropsType) {
   const classes = useStyles();
   const onCardClick = () => {
-    router.push(link);
+    history.push(link);
   };
   return (
     <Card className={classes.card} square={true}>
       <CardActionArea className={classes.media} onClick={onCardClick}>
         <div>
-          <ImageLoader url={cover || CoverImage} className={classes.media} />
+          <ImageLoader url={cover || CoverImage} className={classes.media}/>
         </div>
       </CardActionArea>
       <div className={classes.infoArea}>
-        <Box fontWeight="fontWeightLight" fontSize="subtitle.fontSize" textOverflow="ellipsis"
-             className={classes.title}>
+        <Box
+          fontWeight="fontWeightLight"
+          fontSize="subtitle.fontSize"
+          textOverflow="ellipsis"
+          className={classes.title}
+        >
           {title}
         </Box>
         <Box fontWeight="fontWeightBold" fontSize="subtitle2.fontSize" className={classes.author}>
           {author.text}
         </Box>
         <div>
-          {series && <Box fontWeight="fontWeightLight" fontSize="caption.fontSize" textOverflow="ellipsis"
-                          className={classes.series}>{series.text}</Box>}
+          {series &&
+          <Box
+            fontWeight="fontWeightLight"
+            fontSize="caption.fontSize"
+            textOverflow="ellipsis"
+            className={classes.series}
+          >
+            {series.text}
+          </Box>}
         </div>
 
       </div>

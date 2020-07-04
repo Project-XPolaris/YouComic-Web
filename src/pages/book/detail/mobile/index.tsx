@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
@@ -6,7 +6,6 @@ import { Button, Chip, Divider, Link, withWidth } from '@material-ui/core';
 import { DetailModelStateType } from '@/pages/book/detail/model';
 import { getBookTagInfo } from '@/util/book';
 import { Tag } from '@/services/tag';
-import router from 'umi/router';
 import TitleSection from '@/pages/book/detail/mobile/components/TitleSection/TitleSection';
 import { Book } from '@/services/book';
 import BookCollection from '@/pages/book/detail/mobile/components/BookCollection';
@@ -15,6 +14,7 @@ import { UserStateType } from '@/models/user';
 import SelectCollectionDialog from '@/pages/book/detail/components/SelectCollectionDialog';
 import { ScrollToTopOnMount } from '@/util/scroll';
 import ImageLoader from '@/components/ImageLoader';
+import { history } from '@@/core/umiExports';
 
 
 const useStyles = makeStyles({
@@ -89,7 +89,7 @@ const useStyles = makeStyles({
   bookTag: {
     marginRight: 16,
     marginBottom: 12,
-    maxWidth:"80%"
+    maxWidth: '80%',
   },
 });
 
@@ -97,21 +97,20 @@ interface BookDetailMobilePropsType {
   dispatch: Dispatch,
   width: any,
   bookDetail: DetailModelStateType
-  user:UserStateType
+  user: UserStateType
 }
 
-function BookDetailMobile({ dispatch, bookDetail: { book, tags, tagBooks,isSelectCollectionDialogOpen },user:{ownCollections} }: BookDetailMobilePropsType) {
+function BookDetailMobile({ dispatch, bookDetail: { book, tags, tagBooks, isSelectCollectionDialogOpen }, user: { ownCollections } }: BookDetailMobilePropsType) {
   const classes = useStyles();
-  const [addToCollectionActive, setAddToCollectionActive] = useState(false);
   const { series, author, theme } = getBookTagInfo(book);
   const renderTags = () => {
     if (tags) {
       return tags.map((tag: Tag) => {
         const onTagClick = () => {
-          router.push(`/tag/${tag.id}`);
+          history.push(`/tag/${tag.id}`);
         };
         return (
-          <Chip className={classes.bookTag} label={tag.name} onClick={onTagClick}/>
+          <Chip className={classes.bookTag} label={tag.name} onClick={onTagClick} key={tag.id}/>
         );
       });
 
@@ -155,13 +154,13 @@ function BookDetailMobile({ dispatch, bookDetail: { book, tags, tagBooks,isSelec
   };
   const authorBooks = getSameAuthorBookList();
   const onAddToCollectionButton = () => {
-      dispatch({
-        type: 'bookDetail/setSelectCollectionOpen',
-        payload: {
-          open: true,
-        },
-      });
-  }
+    dispatch({
+      type: 'bookDetail/setSelectCollectionOpen',
+      payload: {
+        open: true,
+      },
+    });
+  };
   const onAddToCollectionClose = () => {
     dispatch({
       type: 'bookDetail/setSelectCollectionOpen',
@@ -180,7 +179,7 @@ function BookDetailMobile({ dispatch, bookDetail: { book, tags, tagBooks,isSelec
   };
   const onReadButtonClick = () => {
     if (book) {
-      router.push(`/book/${book.id}/read`);
+      history.push(`/book/${book.id}/read`);
     }
   };
   return (
@@ -196,9 +195,7 @@ function BookDetailMobile({ dispatch, bookDetail: { book, tags, tagBooks,isSelec
         book &&
         <div className={classes.content}>
           <div className={classes.header}>
-            {
-               <ImageLoader className={classes.cover} url={book.cover}/>
-            }
+            {<ImageLoader className={classes.cover} url={book.cover}/>}
             <div className={classes.headerRight}>
               <div className={classes.title}>
                 {book.name}
@@ -237,7 +234,14 @@ function BookDetailMobile({ dispatch, bookDetail: { book, tags, tagBooks,isSelec
             >
               加入收藏
             </Button>
-            <Button color={'primary'} variant="contained" disableElevation={true} onClick={onReadButtonClick}>开始阅读</Button>
+            <Button
+              color={'primary'}
+              variant="contained"
+              disableElevation={true}
+              onClick={onReadButtonClick}
+            >
+              开始阅读
+            </Button>
           </div>
           <Divider className={classes.divider}/>
 

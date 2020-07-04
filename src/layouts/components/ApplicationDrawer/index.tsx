@@ -1,15 +1,15 @@
 import * as React from 'react';
 import {
   Drawer,
+  isWidthDown,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   makeStyles,
-  useTheme, withWidth, isWidthDown,
+  withWidth,
 } from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
-import router from 'umi/router';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { connect, Dispatch } from 'dva';
@@ -19,9 +19,9 @@ import { UserStateType } from '@/models/user';
 import ApplicationDrawerCollection from '@/layouts/components/ApplicationDrawer/collection';
 import AppsIcon from '@material-ui/icons/Apps';
 // @ts-ignore
-import { formatMessage } from 'umi/locale';
 import isMobile from 'ismobilejs';
-
+import {  history } from '@@/core/umiExports';
+import {useIntl} from '@@/plugin-locale/localeExports'
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -55,10 +55,10 @@ interface DrawerNavigationItem {
   needLogin: boolean
 }
 
-interface CollectionListI {
-  title: string
-  onClick: () => void
-}
+// interface CollectionListI {
+//   title: string
+//   onClick: () => void
+// }
 
 const ApplicationDrawer = ({
                              isOpen = false,
@@ -70,12 +70,12 @@ const ApplicationDrawer = ({
                              ...props
                            }: ApplicationDrawerPropsType) => {
   const classes = useStyles();
-  const theme = useTheme();
   const { drawerMode } = layout;
   // @ts-ignore
+  const intl = useIntl()
   const items: DrawerNavigationItem[] = [
     {
-      title: formatMessage({ id: 'nav.home' }),
+      title: intl.formatMessage({ id: 'nav.home' }),
       link: '/',
       icon: <HomeIcon/>,
       needLogin: false,
@@ -115,6 +115,7 @@ const ApplicationDrawer = ({
         />
       );
     }
+    return undefined
   };
   const renderNavigationItems = () => {
     const navs = items.map(item => {
@@ -130,7 +131,7 @@ const ApplicationDrawer = ({
             }
           })
         }
-        router.push(item.link)
+        history.push(item.link)
       };
       return (
         <ListItem button={true} onClick={item.onClickItem ? item.onClickItem : onNavigationItemClick} key={item.title}>

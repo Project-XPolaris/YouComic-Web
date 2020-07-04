@@ -1,40 +1,42 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import router from 'umi/router';
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle, Divider, IconButton, List, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, ListSubheader,
+  DialogTitle,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+  ListSubheader,
   Menu,
-  MenuItem, TextField,
+  MenuItem,
+  TextField,
 } from '@material-ui/core';
 import { Collection } from '@/services/collection';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { redirectByURL } from '@/util/url';
 import { Controller, useForm } from 'react-hook-form';
 import AddIcon from '@material-ui/icons/Add';
 import { UserStateType } from '@/models/user';
 import { LayoutModelStateType } from '@/models/layout';
 import { Dispatch } from 'dva';
+import { history } from '@@/core/umiExports';
 
-const useStyles = makeStyles({
-  main: {},
-});
+// const useStyles = makeStyles({
+//   main: {},
+// });
 
 interface ApplicationDrawerCollectionPropsType {
   user: UserStateType,
   layout: LayoutModelStateType,
   dispatch: Dispatch,
   location: any
-}
-
-interface CreateCollectionFormData {
-  name: string
 }
 
 export default function ApplicationDrawerCollection(
@@ -49,7 +51,6 @@ export default function ApplicationDrawerCollection(
   const [deleteCollectionDialogOpen, setDeleteCollectionDialogOpen] = useState<boolean>(false);
   const [createCollectionDialogOpen, setCreateCollectionDialogOpen] = useState(false);
   const { ownCollections, followCollections } = user;
-  const { currentCollectionId } = layout;
   const { handleSubmit, control } = useForm();
   const onSubmit = ({ name }: any) => {
     dispatch({
@@ -74,9 +75,9 @@ export default function ApplicationDrawerCollection(
     });
     const matchRegex = RegExp('^/collection/.*?$');
     if (matchRegex.test(location.pathname)) {
-      router.replace(toURL);
+      history.replace(toURL);
     } else {
-      router.push(toURL);
+      history.push(toURL);
     }
 
   };

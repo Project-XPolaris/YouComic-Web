@@ -3,7 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Tag } from '@/services/tag';
 import { Avatar, Box, Card, CardActionArea, CardActions, Divider } from '@material-ui/core';
 import randomcolor from 'randomcolor'
-import router from 'umi/router';
+import { history } from '@@/core/umiExports';
 const useStyles = makeStyles((theme: Theme) => ({
   main: {},
   header: {
@@ -39,7 +39,7 @@ export default function TagCard({ tag }: TagCardPropsType) {
     luminosity:"dark"
   });
   const onTagClick = () => {
-    router.push(`/tag/${tag.id}`)
+    history.push(`/tag/${tag.id}`)
   };
   return (
     <Card className={classes.main}>

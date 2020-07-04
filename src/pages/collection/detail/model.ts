@@ -6,7 +6,7 @@ import { ListQueryContainer } from '@/services/base';
 import { getCoverThumbnailURL, getImageURL } from '@/util/image';
 import { deleteBookFromCollection } from '@/services/collection';
 
-const pathToRegexp = require('path-to-regexp');
+const { pathToRegexp } = require("path-to-regexp");
 
 export interface CollectionDetailModelStateType {
   books?: Book[]

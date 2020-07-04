@@ -1,9 +1,9 @@
-import router from 'umi/router';
 import URI from "urijs";
+import { history } from '@@/core/umiExports';
 
 export function redirectByURL(toURL: string, current: string) {
   if (current !== toURL) {
-    router.push(toURL);
+    history.push(toURL);
   }
 }
 
@@ -14,7 +14,7 @@ export function updateQueryParamAndReplaceURL(queryParameters: any, pathName?: s
     basePath = window.location.pathname
   }
   const searchQuery = URI(window.location.search).setSearch(queryParameters).toString();
-  router.replace(`${basePath}${searchQuery}`)
+  history.replace(`${basePath}${searchQuery}`)
 }
 
 export function getPaginationFromURL(query: { [key: string]: string }, defaultPage: number, defaultPageSize: number) : {page:number,pageSize:number}{

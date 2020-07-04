@@ -1,13 +1,15 @@
-import { Effect, Subscription } from 'dva';
+import { Subscription } from 'dva';
 import { Reducer } from 'redux';
 import isMobile from 'ismobilejs';
-const pathToRegexp = require('path-to-regexp');
+
+const { pathToRegexp } = require("path-to-regexp");
+
 
 export interface LayoutModelStateType {
   drawerMode: 'normal' | 'collection'
   currentCollectionId: number,
-  isDrawerOpen:boolean,
-  appBarHide:boolean
+  isDrawerOpen: boolean,
+  appBarHide: boolean
 }
 
 export interface LayoutModelType {
@@ -15,13 +17,13 @@ export interface LayoutModelType {
   reducers: {
     changeDrawerMode: Reducer
     changeCollectionItem: Reducer
-    setDrawerOpen:Reducer
-    setAppBarHide:Reducer
+    setDrawerOpen: Reducer
+    setAppBarHide: Reducer
   }
   state: LayoutModelStateType
   effects: {}
   subscriptions: {
-    setup:Subscription
+    setup: Subscription
   }
 }
 
@@ -30,14 +32,14 @@ const LayoutModel: LayoutModelType = {
   state: {
     drawerMode: 'normal',
     currentCollectionId: 0,
-    isDrawerOpen:((isMobile) => {
+    isDrawerOpen: ((isMobile) => {
       if (isMobile !== undefined) {
         return !isMobile.phone;
       } else {
         return false;
       }
     })(isMobile(window.navigator.userAgent)),
-    appBarHide:false
+    appBarHide: false,
   },
   subscriptions: {
     'setup'({ dispatch, history }) {
@@ -48,13 +50,13 @@ const LayoutModel: LayoutModelType = {
           dispatch({
             type: 'changeDrawerMode',
             payload: {
-              mode:"collection",
+              mode: 'collection',
             },
           });
           dispatch({
             type: 'changeCollectionItem',
             payload: {
-              id:Number(match[1]),
+              id: Number(match[1]),
             },
           });
         }
@@ -75,18 +77,18 @@ const LayoutModel: LayoutModelType = {
         currentCollectionId: payload.id,
       };
     },
-    setDrawerOpen(state,{payload}){
-      return{
+    setDrawerOpen(state, { payload }) {
+      return {
         ...state,
-        isDrawerOpen:payload.open
-      }
+        isDrawerOpen: payload.open,
+      };
     },
-    setAppBarHide(state,{payload:{isHide}}){
-      return{
+    setAppBarHide(state, { payload: { isHide } }) {
+      return {
         ...state,
-        appBarHide:isHide
-      }
-    }
+        appBarHide: isHide,
+      };
+    },
   },
 
 };

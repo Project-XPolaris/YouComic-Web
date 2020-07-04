@@ -7,7 +7,7 @@ import { queryTagBooks, Tag } from '@/services/tag';
 import { getCoverThumbnailURL } from '@/util/image';
 import { addBookToCollection } from '@/services/collection';
 
-const pathToRegexp = require('path-to-regexp');
+const { pathToRegexp } = require("path-to-regexp");
 
 export interface DetailModelStateType {
   id: number
@@ -101,7 +101,7 @@ const DetailModel: DetailModelType = {
       });
     },
     * queryTagBooks({ payload: { id, page, pageSize } }, { call, put }) {
-      const queryTagBooksResponse: ListQueryContainer<Book> = yield call(queryTagBooks, { id, page, pageSize });
+      const queryTagBooksResponse: ListQueryContainer<Book> = yield call(queryBooks, { tag:id, page, pageSize });
       queryTagBooksResponse.result.forEach((book: Book) => book.cover = getCoverThumbnailURL(book.cover));
       yield put({
         type: 'onQueryTagBooksSuccess',

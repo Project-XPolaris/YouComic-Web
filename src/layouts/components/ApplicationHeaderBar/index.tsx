@@ -12,7 +12,6 @@ import ApplicationDrawer from '@/layouts/components/ApplicationDrawer';
 import { UserStateType } from '@/models/user';
 import UserCard from '@/layouts/components/UserCardPopover/UserCard';
 import { connect, Dispatch } from 'dva';
-import router from 'umi/router';
 import SearchInput from '@/layouts/components/SearchInput';
 import SearchBooksToolBar from '@/layouts/components/ApplicationHeaderBar/components/SearchBooksToolBar';
 import SearchTagsToolBar from '@/layouts/components/ApplicationHeaderBar/components/SearchTagsToolBar';
@@ -21,6 +20,7 @@ import { ConnectType } from '@/global/connect';
 import { LayoutModelStateType } from '@/models/layout';
 import { BookListModelStateType } from '@/pages/book/list/model';
 import BookListTool from '@/layouts/components/ApplicationHeaderBar/components/BookListTool';
+import { history } from '@@/core/umiExports';
 
 const drawerWidth = 240;
 
@@ -118,7 +118,7 @@ const ApplicationHeaderBar = (
     });
   };
   const onLoginClick = () => {
-    router.push('/user/login');
+    history.push('/user/login');
   };
   const getAppBarClasses = () => {
     if (isWidthDown('md', width)) {

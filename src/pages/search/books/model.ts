@@ -5,10 +5,8 @@ import { ConnectType } from '@/global/connect';
 import { ListQueryContainer } from '@/services/base';
 import { getCoverThumbnailURL } from '@/util/image';
 import { encodeOrderToUrl, getOrdersFromUrlQuery, getPaginationFromURL } from '@/util/url';
-import { BookListModelStateType } from '@/pages/book/list/model';
 
-const pathToRegexp = require('path-to-regexp');
-
+const { pathToRegexp } = require("path-to-regexp");
 export interface SearchBooksModelStateType {
   books?: []
   filter: {

@@ -1,11 +1,10 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
-import router from 'umi/router';
-import { Box, Divider, Link } from '@material-ui/core';
+import { Box, Link } from '@material-ui/core';
 import { Tag } from '@/services/tag';
 import ImageLoader from '@/components/ImageLoader';
+import { history } from '@@/core/umiExports';
 
 const useStyles = makeStyles({
   card: {
@@ -54,9 +53,6 @@ interface BookCardPropsType {
   link: string
 }
 
-const LoadingSkeleton = () => {
-
-};
 export default function BookCard({
                                    cover,
                                    title = '未知',
@@ -67,27 +63,27 @@ export default function BookCard({
                                  }: BookCardPropsType) {
   const classes = useStyles();
   const onCardClick = () => {
-    router.push(link);
+    history.push(link);
   };
   const onAuthorClick = () => {
     if (author) {
-      router.push(`/tag/${author.id}`);
+      history.push(`/tag/${author.id}`);
     }
   };
   const onThemeClick = () => {
     if (theme) {
-      router.push(`/tag/${theme.id}`);
+      history.push(`/tag/${theme.id}`);
     }
   };
   const onSeriesClick = () => {
     if (series) {
-      router.push(`/tag/${series.id}`);
+      history.push(`/tag/${series.id}`);
     }
   };
   return (
     <div className={classes.card}>
       <CardActionArea className={classes.media} onClick={onCardClick}>
-        <ImageLoader className={classes.cover} url={cover} />
+        <ImageLoader className={classes.cover} url={cover}/>
       </CardActionArea>
       <div className={classes.infoArea}>
         <Box

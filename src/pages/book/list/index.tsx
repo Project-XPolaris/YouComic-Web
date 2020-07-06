@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
 import { BookListModelStateType } from '@/pages/book/list/model';
 import BookCollection, { BookCollectionItem } from '@/layouts/components/BookCollection';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import Pagination from '@/layouts/components/Pagination';
 import { LayoutModelStateType } from '@/models/layout';
-import { withWidth, isWidthDown } from '@material-ui/core';
+import { isWidthDown, withWidth } from '@material-ui/core';
 import BoolListMobilePage from '@/pages/book/list/mobile';
 import MaterialPagination from '@material-ui/lab/Pagination';
 import { updateQueryParamAndReplaceURL } from '@/util/url';

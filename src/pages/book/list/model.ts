@@ -1,11 +1,10 @@
-import { Effect, Subscription } from 'dva';
 import { ListQueryContainer } from '@/services/base';
 import { Book, queryBooks } from '@/services/book';
-import { Reducer } from 'redux';
 import { ConnectType } from '@/global/connect';
 import { getCoverThumbnailURL } from '@/util/image';
 import { encodeOrderToUrl, getOrdersFromUrlQuery, getPaginationFromURL } from '@/util/url';
-const pathToRegexp = require('path-to-regexp');
+import { Effect, Reducer, Subscription } from '@@/plugin-dva/connect';
+
 
 export interface BookListModelStateType {
   books?: Book[]
@@ -15,14 +14,14 @@ export interface BookListModelStateType {
   order: any[]
   startTime?: string,
   endTime?: string,
-  timeRange?:string
-  nameSearch?:string
-  mobile:{
-    books:[]
-    page:number
-    pageSize:number
-    count:number
-    hasMore:boolean
+  timeRange?: string
+  nameSearch?: string
+  mobile: {
+    books: []
+    page: number
+    pageSize: number
+    count: number
+    hasMore: boolean
   }
 }
 
@@ -33,14 +32,14 @@ export interface BookListModelType {
     setPage: Reducer
     setOrder: Reducer
     setTimeRange: Reducer
-    onQueryMobileBookSuccess:Reducer
-    clearLoadMore:Reducer
-    setNameSearch:Reducer
+    onQueryMobileBookSuccess: Reducer
+    clearLoadMore: Reducer
+    setNameSearch: Reducer
   }
   state: BookListModelStateType
   effects: {
     queryBooks: Effect
-    queryMobileBook:Effect
+    queryMobileBook: Effect
   }
   subscriptions: {
     setup: Subscription
@@ -55,66 +54,66 @@ const BookListModel: BookListModelType = {
     pageSize: 24,
     total: 0,
     order: [],
-    mobile:{
-      books:[],
-      page:0,
-      pageSize:10,
-      count:0,
-      hasMore:true
-    }
+    mobile: {
+      books: [],
+      page: 0,
+      pageSize: 10,
+      count: 0,
+      hasMore: true,
+    },
   },
   subscriptions: {
-    setup({dispatch, history}) {
+    setup({ dispatch, history }) {
       history.listen((location: any) => {
         if (location.pathname === '/books') {
           // if (window.history.scrollRestoration) {
           //   window.history.scrollRestoration = 'manual';
           // }
-          const {page, pageSize} = getPaginationFromURL(location.query,1,24)
+          const { page, pageSize } = getPaginationFromURL(location.query, 1, 24);
           dispatch({
-            type:"setPage",
-            payload:{
+            type: 'setPage',
+            payload: {
               page,
-              pageSize
-            }
-          })
-          const {timeRange,startTime,endTime} = location.query
+              pageSize,
+            },
+          });
+          const { timeRange, startTime, endTime } = location.query;
           dispatch({
-            type:"setTimeRange",
-            payload:{
-              timeRange,startTime,endTime
-            }
-          })
+            type: 'setTimeRange',
+            payload: {
+              timeRange, startTime, endTime,
+            },
+          });
           dispatch({
-            type:"setOrder",
-            payload:{
-              order:getOrdersFromUrlQuery(location.query.order,"-id")
-            }
-          })
+            type: 'setOrder',
+            payload: {
+              order: getOrdersFromUrlQuery(location.query.order, '-id'),
+            },
+          });
           dispatch({
-            type:"setNameSearch",
-            payload:{
-              nameSearch:location.query.nameSearch
-            }
-          })
+            type: 'setNameSearch',
+            payload: {
+              nameSearch: location.query.nameSearch,
+            },
+          });
 
           dispatch({
-            type:"queryBooks"
-          })
+            type: 'queryBooks',
+          });
         }
       });
     },
   },
   effects: {
     * queryBooks({ payload }, { call, put, select }) {
-      const { page, pageSize, order, startTime, endTime,nameSearch } = yield select((state: ConnectType) => (state.bookList));
+      const { page, pageSize, order, startTime, endTime, nameSearch } = yield select((state: ConnectType) => (state.bookList));
       const queryBookResponse: ListQueryContainer<Book> = yield call(queryBooks, {
         page,
         page_size: pageSize,
-        order:encodeOrderToUrl(order),
+        order: encodeOrderToUrl(order),
         startTime,
         endTime,
-        nameSearch
+        nameSearch,
       });
       queryBookResponse.result.forEach(book => book.cover = getCoverThumbnailURL(book.cover));
       yield put({
@@ -125,30 +124,30 @@ const BookListModel: BookListModelType = {
         },
       });
     },
-    *queryMobileBook(_,{call,put,select}){
-      const bookListState : BookListModelStateType = yield select((state: ConnectType) => (state.bookList));
-      const {mobile:{pageSize,page},order,startTime,endTime,nameSearch} = bookListState
+    * queryMobileBook(_, { call, put, select }) {
+      const bookListState: BookListModelStateType = yield select((state: ConnectType) => (state.bookList));
+      const { mobile: { pageSize, page }, order, startTime, endTime, nameSearch } = bookListState;
       const queryBookResponse: ListQueryContainer<Book> = yield call(queryBooks, {
-        page:page + 1,
+        page: page + 1,
         page_size: pageSize,
-        order : encodeOrderToUrl(order),
+        order: encodeOrderToUrl(order),
         startTime,
         endTime,
-        nameSearch
+        nameSearch,
       });
       queryBookResponse.result.forEach(book => book.cover = getCoverThumbnailURL(book.cover));
 
       yield put({
-        type:"onQueryMobileBookSuccess",
-        payload:{
-          books:queryBookResponse.result,
-          page:queryBookResponse.page,
-          pageSize:queryBookResponse.pageSize,
-          count:queryBookResponse.count,
-          hasMore:queryBookResponse.next.length > 0
-        }
-      })
-    }
+        type: 'onQueryMobileBookSuccess',
+        payload: {
+          books: queryBookResponse.result,
+          page: queryBookResponse.page,
+          pageSize: queryBookResponse.pageSize,
+          count: queryBookResponse.count,
+          hasMore: queryBookResponse.next.length > 0,
+        },
+      });
+    },
   },
   reducers: {
     onQueryBookSuccess(state, { payload }) {
@@ -169,45 +168,45 @@ const BookListModel: BookListModelType = {
         ...state,
         startTime: payload.startTime,
         endTime: payload.endTime,
-        timeRange:payload.timeRange
+        timeRange: payload.timeRange,
       };
     },
-    setOrder(state, { payload:{order} }) {
+    setOrder(state, { payload: { order } }) {
       return {
         ...state,
         order,
       };
     },
-    onQueryMobileBookSuccess(state,{payload:{page,pageSize,books,hasMore}}){
+    onQueryMobileBookSuccess(state, { payload: { page, pageSize, books, hasMore } }) {
       return {
         ...state,
-        mobile:{
+        mobile: {
           ...state.mobile,
-          books:[...state.mobile.books,...books],
+          books: [...state.mobile.books, ...books],
           page,
           pageSize,
-          hasMore
-        }
-      }
+          hasMore,
+        },
+      };
     },
-    setNameSearch(state,{payload:{nameSearch}}){
-      return{
+    setNameSearch(state, { payload: { nameSearch } }) {
+      return {
         ...state,
-        nameSearch
-      }
+        nameSearch,
+      };
     },
-    clearLoadMore(state,_){
-      return{
+    clearLoadMore(state, _) {
+      return {
         ...state,
-        mobile:{
-          books:[],
-          page:0,
-          pageSize:10,
-          count:0,
-          hasMore:true
-        }
-      }
-    }
+        mobile: {
+          books: [],
+          page: 0,
+          pageSize: 10,
+          count: 0,
+          hasMore: true,
+        },
+      };
+    },
 
   },
 };

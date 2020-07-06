@@ -9,36 +9,40 @@ import { Dispatch, Loading } from '@@/plugin-dva/connect';
 import { isWidthDown, withWidth } from '@material-ui/core';
 import { connect } from '@@/plugin-dva/exports';
 import React from 'react';
+import { getBooleanWithDefault } from '@/util/function';
 
 
 interface MainPagePropsType {
   dispatch: Dispatch,
   home: HomeModelStateType,
-  layout:LayoutModelStateType,
-  width:any,
-  loading:Loading
+  layout: LayoutModelStateType,
+  width: any,
+  loading: Loading
 }
 
-function MainPage({ dispatch, home,layout:{isDrawerOpen},width,loading }: MainPagePropsType) {
+function MainPage({ dispatch, home, layout: { isDrawerOpen }, width, loading }: MainPagePropsType) {
   const classes = useStyles();
-  const {books} = home;
-  if (isWidthDown("md",width)){
+  const { books } = home;
+  if (isWidthDown('md', width)) {
     return (
-      <HomeMobilePage />
-    )
-  }else{
+      <HomeMobilePage/>
+    );
+  } else {
     return (
       <div className={classes.main}>
         <ScrollToTopOnMount/>
-        {books.recentAdd &&
         <div className={classes.row}>
-          <BookRowCollection title={'最近添加'} books={books.recentAdd} loading={Boolean(loading.effects["home/queryRecentAddBooks"])}/>
+          <BookRowCollection
+            title={'最近添加'}
+            books={books?.recentAdd}
+            loadingCardCount={16}
+            loading={getBooleanWithDefault(loading.effects['home/queryRecentAddBooks'], true)}
+          />
         </div>
-        }
       </div>
     );
   }
 
 }
 
-export default connect(({ home,layout,loading }: ConnectType) => ({ home,layout,loading }))(withWidth()(MainPage));
+export default connect(({ home, layout, loading }: ConnectType) => ({ home, layout, loading }))(withWidth()(MainPage));

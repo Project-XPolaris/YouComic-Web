@@ -14,25 +14,38 @@ interface BookCollectionPropsType {
   title: string,
   books: Book[]
   loading?: boolean
+  loadingCardCount?:number
 }
 
-export default function BookCollection({ title, books,loading = false }: BookCollectionPropsType) {
+export default function BookCollection({ title, books,loading = false,loadingCardCount = 6 }: BookCollectionPropsType) {
   const classes = useStyles();
-  const items = books.map((book:Book) => (
-    <Grid item={true} key={book.name}>
-      <BookCard
-        book={book}
-        loading={loading}
-      />
-    </Grid>
-  ));
+  const renderItems = () => {
+    if (loading){
+      return [...Array(loadingCardCount).keys()].map(idx => (
+        <Grid item={true} key={idx}>
+          <BookCard
+            loading={loading}
+          />
+        </Grid>
+      ))
+    }
+    return books.map((book:Book) => (
+      <Grid item={true} key={book.name}>
+        <BookCard
+          book={book}
+          loading={loading}
+        />
+      </Grid>
+    ));
+  }
+
   return (
     <div className={classes.main}>
       <Typography variant="h5">
         {title}
       </Typography>
       <Grid container={true} spacing={1}>
-        {items}
+        {renderItems()}
       </Grid>
     </div>
   );

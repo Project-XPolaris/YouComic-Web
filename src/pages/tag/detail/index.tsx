@@ -1,12 +1,13 @@
-import BookCollection, { BookCollectionItem } from '@/layouts/components/BookCollection';
+import BookCollection from '@/layouts/components/BookCollection';
 import { ConnectType } from '@/global/connect';
 import { TagDetailModelStateType } from '@/pages/tag/detail/model';
 import { LayoutModelStateType } from '@/models/layout';
 import MaterialPagination from '@material-ui/lab/Pagination';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { Dispatch } from '@@/plugin-dva/connect';
+import { Dispatch, Loading } from '@@/plugin-dva/connect';
 import { connect } from '@@/plugin-dva/exports';
 import React from 'react';
+import { getBooleanWithDefault } from '@/util/function';
 
 const useStyles = makeStyles((theme: Theme) => ({
   main: {
@@ -74,31 +75,16 @@ interface TagDetailPagePropsType {
   tagDetail: TagDetailModelStateType
   layout: LayoutModelStateType
   dispatch: Dispatch
+  loading: Loading
 }
 
 
-function TagDetailPage({ tagDetail, layout, dispatch }: TagDetailPagePropsType) {
+function TagDetailPage({ tagDetail, layout, dispatch, loading }: TagDetailPagePropsType) {
   const classes = useStyles();
   const { books, tag } = tagDetail;
   const { isDrawerOpen } = layout;
-  const bookItem: BookCollectionItem[] | undefined = books?.map(book => ({
-    title: book.name,
-    cover: book.cover,
-    author: ((tag) => tag ? {
-      text: tag.name,
-      link: `/tag/${tag.id}`,
-    } : undefined)(book.tags.find(tag => tag.type === 'artist')),
-    theme: ((tag) => tag ? {
-      text: tag.name,
-      link: `/tag/${tag.id}`,
-    } : undefined)(book.tags.find(tag => tag.type === 'theme')),
-    series: ((tag) => tag ? {
-      text: tag.name,
-      link: `/tag/${tag.id}`,
-    } : undefined)(book.tags.find(tag => tag.type === 'series')),
-    link: `/book/${book.id}`,
-  }));
-  const onPaginationChange = (_ : any, page = tagDetail.page) => (pageSize = tagDetail.pageSize) => {
+  const bookItem = books;
+  const onPaginationChange = (_: any, page = tagDetail.page) => (pageSize = tagDetail.pageSize) => {
     dispatch({
       type: 'tagDetail/setPage',
       payload: {
@@ -112,7 +98,11 @@ function TagDetailPage({ tagDetail, layout, dispatch }: TagDetailPagePropsType) 
   };
   return (
     <div className={isDrawerOpen ? classes.mainExpand : classes.main}>
-      <BookCollection title={tag ? tag.name : '标签'} books={bookItem || []}/>
+      <BookCollection
+        title={tag ? tag.name : '标签'}
+        books={bookItem || []}
+        loading={getBooleanWithDefault(loading.effects['tagDetail/queryBooks'], true)}
+      />
       <div className={classes.paginationWrap}>
         <MaterialPagination
           count={Math.ceil(tagDetail.count / tagDetail.pageSize)}
@@ -125,4 +115,8 @@ function TagDetailPage({ tagDetail, layout, dispatch }: TagDetailPagePropsType) 
   );
 }
 
-export default connect(({ tagDetail, layout }: ConnectType) => ({ tagDetail, layout }))(TagDetailPage);
+export default connect(({ tagDetail, layout, loading }: ConnectType) => ({
+  tagDetail,
+  layout,
+  loading,
+}))(TagDetailPage);

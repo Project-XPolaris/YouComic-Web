@@ -28,30 +28,24 @@ export default function BookCard({ book, loading = false }: BookCardPropsType) {
       </CardActionArea>
       <CardContent className={classes.content}>
         <Link href={`/book/${book?.id}`} className={classes.link}>
-          {loading ? <Skeleton variant="text"/> :
+          {loading || !book ? <Skeleton variant="text"/> :
             <Box overflow="hidden" width={1} maxWidth={1} className={classes.title}>{book?.name}</Box>}
         </Link>
         {
-          !loading && (author ?
-            <Link href={`/tag/${author?.id}`} className={classes.link}>
-              <Box className={classes.author}>{author?.name || '未知'}</Box>
-            </Link> :
-            <Box className={classes.author}>未知</Box>
+          loading || !book ?<Skeleton variant="text"/> : (author ?
+              <Link href={`/tag/${author?.id}`} className={classes.link}>
+                <Box className={classes.author}>{author?.name || '未知'}</Box>
+              </Link> :
+              <Box className={classes.author}>未知</Box>
           )
         }
         {
-          loading && <Skeleton variant="text"/>
-        }
-        {
-          !loading && (series ?
-            <Link href={`/tag/${series?.id}`} className={classes.link}>
-              <Box className={classes.series}>{series?.name || '未知'}</Box>
-            </Link> :
-            <Box className={classes.series}>未知</Box>
+          loading || !book ? <Skeleton variant="text"/>:(series ?
+              <Link href={`/tag/${series?.id}`} className={classes.link}>
+                <Box className={classes.series}>{series?.name || '未知'}</Box>
+              </Link> :
+              <Box className={classes.series}>未知</Box>
           )
-        }
-        {
-          loading && <Skeleton variant="text"/>
         }
 
       </CardContent>

@@ -7,9 +7,9 @@ const useStyles = makeStyles((theme:Theme) => ({
     borderRadius:2
   },
   cover:{
-    maxHeight:230,
-    minWidth:160,
-    height:230
+    width:160,
+    height:230,
+    objectFit:"cover"
   },
   title:{
     textOverflow:"ellipsis",

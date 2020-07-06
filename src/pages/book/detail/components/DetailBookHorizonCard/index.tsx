@@ -1,11 +1,12 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
 import CoverImage from '../../../../../assets/no-cover.png';
-import { Box } from '@material-ui/core';
 import ImageLoader from '@/components/ImageLoader';
 import { history } from '@@/core/umiExports';
+import React from 'react';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import { Box, Card, CardActionArea } from '@material-ui/core';
+import { Book } from '@/services/book';
+import { getBookTagInfo } from '@/util/book';
+import { Skeleton } from '@material-ui/lab';
 
 const useStyles = makeStyles({
   card: {
@@ -14,8 +15,9 @@ const useStyles = makeStyles({
     maxHeight: 160,
   },
   media: {
-    maxHeight: 160,
-    maxWidth: 110,
+    height: 160,
+    width: 110,
+    objectFit: 'cover',
   },
   title: {
     overflow: 'hidden',
@@ -28,6 +30,7 @@ const useStyles = makeStyles({
     marginLeft: 16,
     paddingTop: 16,
     paddingRight: 16,
+    flexGrow: 1,
   },
   author: {
     marginTop: 8,
@@ -38,44 +41,30 @@ const useStyles = makeStyles({
     height: 16,
     overflow: 'hidden',
   },
+  actionArea: {
+    width: 110,
+  },
 
 });
 
 interface BookDetailHorizonCardPropsType {
-  cover?: string
-  title: string,
-  author?: {
-    text?: string,
-    link?: string
-  }
-  theme?: {
-    text?: string,
-    link?: string
-  },
-  series?: {
-    text?: string,
-    link?: string
-  }
-  link: string
+  book?: Book
+  loading?: boolean
 }
-export default function BookDetailHorizonCard({
-                                                cover,
-                                                title = '未知',
-                                                author = { text: '未知作者', link: '#' },
-                                                theme,
-                                                series,
-                                                link,
-                                              }: BookDetailHorizonCardPropsType) {
+
+export default function BookDetailHorizonCard({ book, loading = false }: BookDetailHorizonCardPropsType) {
   const classes = useStyles();
   const onCardClick = () => {
-    history.push(link);
+    if (book !== undefined) {
+      history.push(`/book/${book.id}`);
+    }
   };
+  const { series, author } = getBookTagInfo(book);
   return (
     <Card className={classes.card} square={true}>
-      <CardActionArea className={classes.media} onClick={onCardClick}>
-        <div>
-          <ImageLoader url={cover || CoverImage} className={classes.media}/>
-        </div>
+      <CardActionArea onClick={onCardClick} className={classes.actionArea}>
+        {loading ? <Skeleton width={110} height={160} variant={'rect'} animation={'wave'}/> :
+          <ImageLoader url={book?.cover || CoverImage} className={classes.media} loadingHeight={160} loadingWidth={110}/>}
       </CardActionArea>
       <div className={classes.infoArea}>
         <Box
@@ -84,37 +73,33 @@ export default function BookDetailHorizonCard({
           textOverflow="ellipsis"
           className={classes.title}
         >
-          {title}
+          {
+            loading ?
+              <div>
+                <Skeleton variant={'text'}/>
+                <Skeleton variant={'text'} width={64}/>
+              </div>
+              : book?.name
+          }
+
         </Box>
         <Box fontWeight="fontWeightBold" fontSize="subtitle2.fontSize" className={classes.author}>
-          {author.text}
+          {loading ? <Skeleton variant={'text'} width={120}/> : author?.name}
         </Box>
         <div>
-          {series &&
+
+
           <Box
             fontWeight="fontWeightLight"
             fontSize="caption.fontSize"
             textOverflow="ellipsis"
             className={classes.series}
           >
-            {series.text}
-          </Box>}
+            {loading ? <Skeleton variant={'text'} width={96}/> : series?.name}
+          </Box>
         </div>
 
       </div>
-      {/*<CardContent>*/}
-      {/*  <Typography gutterBottom={true} noWrap={true} variant="subtitle2" component="h2" className={classes.title}>*/}
-      {/*    {title}*/}
-      {/*  </Typography>*/}
-      {/*  <Typography variant="body2" noWrap={true} color="textPrimary" component="p">*/}
-      {/*    {author.text}*/}
-      {/*  </Typography>*/}
-      {/*  {theme && <Typography noWrap={true} variant="body2" color="textSecondary" component="p"*/}
-      {/*                        className={classes.meta}>{theme.text}</Typography>}*/}
-      {/*  {series && <Typography noWrap={true} variant="body2" color="textSecondary" component="p"*/}
-      {/*                         className={classes.meta}>{series.text}</Typography>}*/}
-      {/*</CardContent>*/}
-
     </Card>
   );
 }

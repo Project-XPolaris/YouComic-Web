@@ -1,44 +1,29 @@
+import { Grid, Typography } from '@material-ui/core';
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import BookCard from '@/layouts/components/BookCard';
-import { Grid } from '@material-ui/core';
+import BookCard from '@/components/BookCard';
+import { Book } from '@/services/book';
 
 const useStyles = makeStyles({
   main: {},
 
 });
 
-export interface BookCollectionItem {
-  cover?: string
-  title: string,
-  author?: {
-    text: string,
-    link: string
-  }
-  theme?: {
-    text: string,
-    link: string
-  },
-  series?: {
-    text: string,
-    link: string
-  }
-  link: string,
-
-}
 
 interface BookCollectionPropsType {
   title: string,
-  books: BookCollectionItem[]
+  books: Book[]
   loading?: boolean
 }
 
-export default function BookCollection({ title, books}: BookCollectionPropsType) {
+export default function BookCollection({ title, books,loading = false }: BookCollectionPropsType) {
   const classes = useStyles();
-  const items = books.map(book => (
-    <Grid item={true}  key={book.title} spacing={8}>
-      <BookCard title={book.title} author={book.author} theme={book.theme} series={book.series} cover={book.cover} link={book.link} />
+  const items = books.map((book:Book) => (
+    <Grid item={true} key={book.name}>
+      <BookCard
+        book={book}
+        loading={loading}
+      />
     </Grid>
   ));
   return (

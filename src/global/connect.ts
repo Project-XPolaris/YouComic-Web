@@ -13,6 +13,7 @@ import { SearchModelStateType } from '@/pages/search/model';
 import { SearchBooksModelStateType } from '@/pages/search/books/model';
 import { SearchTagsModelStateType } from '@/pages/search/tags/model';
 import { SearchCollectionsModelStateType } from '@/pages/search/collections/model';
+import { Loading } from '@@/plugin-dva/connect';
 
 export interface ConnectType {
   bookList: BookListModelStateType
@@ -30,4 +31,5 @@ export interface ConnectType {
   searchBooks:SearchBooksModelStateType
   searchTags:SearchTagsModelStateType
   searchCollections:SearchCollectionsModelStateType
+  loading:Loading
 }

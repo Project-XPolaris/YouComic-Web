@@ -1,10 +1,9 @@
-import { Effect, Subscription } from 'dva';
-import { Reducer } from 'redux';
 import { Book, queryBooks } from '@/services/book';
 import { ListQueryContainer } from '@/services/base';
 import { getCoverThumbnailURL } from '@/util/image';
+import { Dispatch, Effect, Reducer, Subscription } from '@@/plugin-dva/connect';
 
-const { pathToRegexp } = require("path-to-regexp");
+const { pathToRegexp } = require('path-to-regexp');
 
 export interface HomeModelStateType {
   books: {
@@ -20,6 +19,7 @@ export interface HomeModelType {
   state: HomeModelStateType
   effects: {
     queryBooks: Effect
+    queryRecentAddBooks:Effect
   }
   subscriptions: {
     setup: Subscription
@@ -32,13 +32,13 @@ const HomeModel: HomeModelType = {
     books: {},
   },
   subscriptions: {
-    'setup'({ dispatch, history }) {
-      history.listen((location) => {
+    'setup'({ dispatch, history }: { dispatch: Dispatch, history: any }) {
+      history.listen((location: any) => {
         const regexp = pathToRegexp('/');
         const match = regexp.exec(location.pathname);
         if (match) {
           dispatch({
-            type: 'queryBooks',
+            type: 'queryRecentAddBooks',
             payload: {
               page: 1,
               pageSize: 12,
@@ -51,6 +51,12 @@ const HomeModel: HomeModelType = {
     },
   },
   effects: {
+    * queryRecentAddBooks({payload},{put}){
+      yield put({
+        type:"queryBooks",
+        payload
+      })
+    },
     * queryBooks({ payload }, { call, put, select }) {
       const { index, ...queryParams } = payload;
       const queryBooksResponse: ListQueryContainer<Book> = yield call(queryBooks, { ...queryParams });

@@ -1,20 +1,22 @@
-import React from 'react';
-import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
 import { BookListModelStateType } from '@/pages/book/list/model';
-import BookCollection, { BookCollectionItem } from '@/layouts/components/BookCollection';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import BookCollection from '@/layouts/components/BookCollection';
 import { LayoutModelStateType } from '@/models/layout';
-import { isWidthDown, withWidth } from '@material-ui/core';
 import BoolListMobilePage from '@/pages/book/list/mobile';
-import MaterialPagination from '@material-ui/lab/Pagination';
 import { updateQueryParamAndReplaceURL } from '@/util/url';
+import { Dispatch, Loading } from '@@/plugin-dva/connect';
+import { makeStyles, Theme } from '@material-ui/core/styles';
+import { isWidthDown, withWidth } from '@material-ui/core';
+import Pagination from '@material-ui/lab/Pagination';
+import React from 'react';
+import { connect } from '@@/plugin-dva/exports';
 
 interface BookListPropsType {
   dispatch: Dispatch
   bookList: BookListModelStateType
   layout: LayoutModelStateType
   width: any
+  loading: Loading
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -81,31 +83,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function BookListPage({ dispatch, bookList, layout, width }: BookListPropsType) {
+function BookListPage({ dispatch, bookList, layout, width, loading }: BookListPropsType) {
 
   const classes = useStyles();
   const { books } = bookList;
-  const bookItem: BookCollectionItem[] | undefined = books?.map(book => ({
-    title: book.name,
-    cover: book.cover,
-    author: ((tag) => tag ? {
-      text: tag.name,
-      link: `/tag/${tag.id}`,
-    } : undefined)(book.tags.find(tag => tag.type === 'artist')),
-    theme: ((tag) => tag ? {
-      text: tag.name,
-      link: `/tag/${tag.id}`,
-    } : undefined)(book.tags.find(tag => tag.type === 'theme')),
-    series: ((tag) => tag ? {
-      text: tag.name,
-      link: `/tag/${tag.id}`,
-    } : undefined)(book.tags.find(tag => tag.type === 'series')),
-    link: `/book/${book.id}`,
-  }));
-  const onSelectPage = (page: number) => {
+  const onSelectPage = (_: any, page: number) => {
     updateQueryParamAndReplaceURL({
-      page
-    },window.location.pathname)
+      page,
+    }, window.location.pathname);
   };
   const { isDrawerOpen } = layout;
 
@@ -117,13 +102,13 @@ function BookListPage({ dispatch, bookList, layout, width }: BookListPropsType) 
     return (
       <div className={isDrawerOpen ? classes.mainExpand : classes.main}>
         <div className={classes.collectionWrap}>
-          <BookCollection title={''} books={bookItem || []}/>
+          <BookCollection title={''} books={books || []} loading={loading.effects['bookList/queryBooks']}/>
           <div className={classes.paginationWrap}>
-            <MaterialPagination
+            <Pagination
               count={Math.ceil(bookList.total / bookList.pageSize)}
               page={bookList.page}
-              onChange={(e,page) => onSelectPage(page)}
-              color={"primary"}
+              onChange={onSelectPage}
+              color={'primary'}
             />
           </div>
         </div>
@@ -133,5 +118,9 @@ function BookListPage({ dispatch, bookList, layout, width }: BookListPropsType) 
 
 }
 
-export default connect(({ bookList, layout }: ConnectType) => ({ bookList, layout }))(withWidth()(BookListPage));
+export default connect(({ bookList, layout, loading }: ConnectType) => ({
+  bookList,
+  layout,
+  loading,
+}))(withWidth()(BookListPage));
 

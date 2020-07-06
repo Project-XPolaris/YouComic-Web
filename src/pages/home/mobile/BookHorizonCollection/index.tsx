@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Book } from '@/services/book';
-import BookCard from '@/pages/home/components/BookCard';
+import BookCard from '@/components/BookCard';
 import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles({

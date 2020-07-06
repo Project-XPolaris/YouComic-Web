@@ -1,13 +1,12 @@
-import { Effect, Subscription } from 'dva';
-import { Reducer } from 'redux';
 import { ConnectType } from '@/global/connect';
 import { ListQueryContainer } from '@/services/base';
 import { Book, queryBooks, queryBookTags } from '@/services/book';
-import { queryTagBooks, Tag } from '@/services/tag';
+import { Tag } from '@/services/tag';
 import { getCoverThumbnailURL } from '@/util/image';
 import { addBookToCollection } from '@/services/collection';
+import { Effect, Reducer, Subscription } from '@@/plugin-dva/connect';
 
-const { pathToRegexp } = require("path-to-regexp");
+const { pathToRegexp } = require('path-to-regexp');
 
 export interface DetailModelStateType {
   id: number
@@ -33,6 +32,11 @@ export interface DetailModelType {
     queryBookTags: Effect
     queryTagBooks: Effect
     addBookToCollection: Effect
+    loadPage: Effect
+    queryRelateAuthor: Effect
+    queryRelateSeries: Effect
+    queryRelateTheme: Effect
+    queryRelateBooksWithTag:Effect
   }
   subscriptions: {
     setup: Subscription
@@ -53,11 +57,9 @@ const DetailModel: DetailModelType = {
         const match = regexp.exec(location.pathname);
         if (match) {
           dispatch({
-            type:"reload",
-            payload:{
-
-            }
-          })
+            type: 'reload',
+            payload: {},
+          });
           dispatch({
             type: 'setBookId',
             payload: {
@@ -65,20 +67,28 @@ const DetailModel: DetailModelType = {
             },
           });
           dispatch({
-            type: 'queryBook',
+            type: 'loadPage',
           });
-          dispatch({
-            type: 'queryBookTags',
-          });
+
+
         }
       });
     },
   },
   effects: {
+    * loadPage(_, { call, put, select, all }) {
+      yield all([
+        put({
+          type: 'queryBook',
+        }),
+        put({
+          type: 'queryBookTags',
+        }),
+      ]);
+    },
     * queryBook(_, { call, put, select }) {
       const { id } = yield select((state: ConnectType) => (state.bookDetail));
       const queryBooksResponse: ListQueryContainer<Book> = yield call(queryBooks, { id });
-
       if (queryBooksResponse.count > 0) {
         const book = queryBooksResponse.result[0];
         book.cover = getCoverThumbnailURL(book.cover);
@@ -88,7 +98,67 @@ const DetailModel: DetailModelType = {
             book: queryBooksResponse.result[0],
           },
         });
+
+        yield put({
+          type: 'queryRelateAuthor',
+        });
+        yield put({
+          type:"queryRelateSeries"
+        })
+        yield put({
+          type:"queryRelateTheme"
+        })
       }
+    },
+    * queryRelateSeries(_, { put, select }) {
+      yield put({
+        type: 'queryRelateBooksWithTag',
+        payload: {
+          type:"series",
+          page: 1,
+          pageSize: 5,
+        },
+      });
+    },
+    * queryRelateAuthor(_, { put, select }) {
+      yield put({
+        type: 'queryRelateBooksWithTag',
+        payload: {
+          type:"artist",
+          page: 1,
+          pageSize: 3,
+        },
+      });
+    },
+    * queryRelateTheme(_, { put, select }) {
+      yield put({
+        type: 'queryRelateBooksWithTag',
+        payload: {
+          type:"theme",
+          page: 1,
+          pageSize: 3,
+        },
+      });
+    },
+    *queryRelateBooksWithTag({payload:{type,page,pageSize}},{call,put,select}){
+      const bookDetailState: DetailModelStateType = yield select((state: ConnectType) => state.bookDetail);
+      const { book } = bookDetailState;
+      console.log(book);
+      if (book === undefined) {
+        return;
+      }
+      const targetTag = book.tags.find(tag => tag.type == type);
+      if (targetTag === undefined) {
+        return;
+      }
+      yield put({
+        type: 'queryTagBooks',
+        payload: {
+          id: targetTag.id,
+          page,
+          pageSize,
+        },
+      });
     },
     * queryBookTags(_, { call, put, select }) {
       const { id } = yield select((state: ConnectType) => (state.bookDetail));
@@ -101,7 +171,7 @@ const DetailModel: DetailModelType = {
       });
     },
     * queryTagBooks({ payload: { id, page, pageSize } }, { call, put }) {
-      const queryTagBooksResponse: ListQueryContainer<Book> = yield call(queryBooks, { tag:id, page, pageSize });
+      const queryTagBooksResponse: ListQueryContainer<Book> = yield call(queryBooks, { tag: id, page, pageSize });
       queryTagBooksResponse.result.forEach((book: Book) => book.cover = getCoverThumbnailURL(book.cover));
       yield put({
         type: 'onQueryTagBooksSuccess',
@@ -114,7 +184,7 @@ const DetailModel: DetailModelType = {
     * addBookToCollection({ payload: { collectionIds } }, { select, call, put }) {
       const { id } = yield select((state: ConnectType) => (state.bookDetail));
       for (let idx = 0; idx < collectionIds.length; idx++) {
-        const addToBookCollectionResponse = yield call(addBookToCollection, {
+        yield call(addBookToCollection, {
           collectionId: collectionIds[idx],
           bookIds: [id],
         });

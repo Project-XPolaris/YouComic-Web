@@ -66,9 +66,6 @@ const BookListModel: BookListModelType = {
     setup({ dispatch, history }) {
       history.listen((location: any) => {
         if (location.pathname === '/books') {
-          // if (window.history.scrollRestoration) {
-          //   window.history.scrollRestoration = 'manual';
-          // }
           const { page, pageSize } = getPaginationFromURL(location.query, 1, 24);
           dispatch({
             type: 'setPage',

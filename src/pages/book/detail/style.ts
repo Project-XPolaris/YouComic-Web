@@ -1,6 +1,7 @@
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import { Theme } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme:Theme) => ({
   main: {
     backgroundColor: '#EEEEEE',
     paddingTop: 120,
@@ -14,28 +15,30 @@ const useStyles = makeStyles(theme => ({
     marginRight:16
   },
   right:{
-
+    minWidth:330
   },
   mainContent: {
     paddingBottom: 48,
-    maxWidth:720
+    maxWidth:720,
+    minWidth:720
   },
   contentHeader: {
     display: 'flex',
+    position:"relative"
   },
   cover: {
-    maxWidth: 200,
-    maxHeight: 300,
+    objectFit:"cover",
+    width: 200,
+    height: 300,
     [theme.breakpoints.down('sm')]: {
       maxWidth: 120,
       maxHeight: 170,
     },
-    alignSelf:"center"
   },
   coverWarp: {
     display: 'flex',
-    maxWidth: 200,
-    maxHeight: 285,
+    width: 200,
+    height: 300,
     [theme.breakpoints.down('sm')]: {
       maxWidth: 120,
       maxHeight: 170,
@@ -63,8 +66,10 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 12,
   },
   headerAction: {
-    marginTop: 48,
     textAlign: 'end',
+    position:"absolute",
+    bottom:0,
+    right:32
   },
   divider: {
     marginTop: 12,
@@ -77,10 +82,13 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 48,
     paddingBottom: 48,
     marginTop: 48,
+    minHeight:160
   },
 
   tagContainer: {
     marginTop: 24,
+    display:'flex'
+
   },
   bookTag: {
     marginRight: 16,
@@ -89,6 +97,7 @@ const useStyles = makeStyles(theme => ({
   authorArea: {
     marginRight: 48,
     marginLeft: 48,
+    minHeight:656
   },
   authorContainer: {
     marginTop: 24,
@@ -96,5 +105,8 @@ const useStyles = makeStyles(theme => ({
   addToCollectionButton: {
     marginRight: 24,
   },
+  sideContainer:{
+    minHeight:730
+  }
 }));
 export default useStyles

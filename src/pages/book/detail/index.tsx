@@ -1,10 +1,5 @@
-import React, { useState } from 'react';
-import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
-import { Box, Button, Chip, Divider, Grid, isWidthDown, Paper, withWidth, WithWidthProps } from '@material-ui/core';
-import BookDetailCard from '@/pages/book/detail/components/DetailBookCard';
 import { DetailModelStateType } from '@/pages/book/detail/model';
-import moment from 'moment';
 import { Tag } from '@/services/tag';
 import { Book } from '@/services/book';
 import { getBookTagInfo } from '@/util/book';
@@ -15,7 +10,14 @@ import useStyles from '@/pages/book/detail/style';
 import BookDetailMobile from '@/pages/book/detail/mobile';
 import { ScrollToTopOnMount } from '@/util/scroll';
 import ImageLoader from '@/components/ImageLoader';
-import { history } from '@@/core/umiExports';
+import { Dispatch, history, Loading } from '@@/core/umiExports';
+import React from 'react';
+import { Box, Button, Chip, Divider, Grid, isWidthDown, Paper, withWidth, WithWidthProps } from '@material-ui/core';
+import { connect } from '@@/plugin-dva/exports';
+import moment from 'moment';
+import { Skeleton } from '@material-ui/lab';
+import BookCard from '@/components/BookCard';
+import { getBooleanWithDefault } from '@/util/function';
 
 
 interface BookDetailPropsType {
@@ -23,14 +25,29 @@ interface BookDetailPropsType {
   dispatch: Dispatch
   user: UserStateType
   width: any
+  loading: Loading
 }
 
-function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsType & WithWidthProps) {
+function BookDetailPage({ bookDetail, dispatch, width, user, loading }: BookDetailPropsType & WithWidthProps) {
   const classes = useStyles();
+  const loadingBook = Boolean(loading.effects['bookDetail/queryBook']);
   const { book, tags, tagBooks, isSelectCollectionDialogOpen } = bookDetail;
   const { ownCollections } = user;
   const { series, author, theme } = getBookTagInfo(book);
   const renderTags = () => {
+    if (loadingBook) {
+      return [1, 2, 3, 4, 5].map(idx =>
+        (
+          <span key={idx} className={classes.bookTag}>
+          <Skeleton
+            variant={'text'}
+            width={96}
+            height={48}
+          />
+        </span>
+        ),
+      );
+    }
     if (tags) {
       return tags.map((tag: Tag) => {
         const onTagClick = () => {
@@ -45,66 +62,32 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
       return undefined;
     }
   };
-  //query relate artist
-  const [isFirstQueryAuthor, setIsFirstQueryAuthor] = useState(true);
-  if (author && !(author.id in tagBooks) && isFirstQueryAuthor) {
-    setIsFirstQueryAuthor(false);
-    dispatch({
-      type: 'bookDetail/queryTagBooks',
-      payload: {
-        page: 1,
-        pageSize: 5,
-        id: author.id,
-      },
-    });
-  }
   const renderRelateAuthorBook = () => {
+    let isRelateAuthorLoading = loading.effects['bookDetail/queryRelateAuthor'];
+    if (isRelateAuthorLoading === undefined) {
+      isRelateAuthorLoading = true;
+    }
+    if (isRelateAuthorLoading ||  !author?.id || !tagBooks[author.id]) {
+      return [1, 2, 3].map(idx => (
+        <Grid item={true} key={idx}>
+          <BookCard book={undefined} loading={true}/>
+        </Grid>
+      ));
+    }
     if (author && author.id in tagBooks) {
       return tagBooks[author.id].map((book: Book) => {
         if (book.id === bookDetail.id) {
           return undefined;
         }
-        const bookMeta = getBookTagInfo(book);
         return (
-          <Grid item={true} xs={3} key={book.id}>
-            <BookDetailCard
-              title={book.name}
-              cover={book.cover}
-              author={{ text: bookMeta.author?.name, link: bookMeta.author ? `/tag/${bookMeta.author.id}` : undefined }}
-              series={{ text: bookMeta.series?.name, link: bookMeta.series ? `/tag/${bookMeta.series.id}` : undefined }}
-              theme={{ text: bookMeta.theme?.name, link: bookMeta.theme ? `/tag/${bookMeta.theme.id}` : undefined }}
-              link={`/book/${book.id}`}
-            />
+          <Grid item={true} key={book.id}>
+            <BookCard book={book} loading={false}/>
           </Grid>);
       });
     } else {
       return undefined;
     }
   };
-  const [isFirstQuerySeries, setIsFirstQuerySeries] = useState(true);
-  if (series && !(series.id in tagBooks) && isFirstQuerySeries) {
-    setIsFirstQuerySeries(false);
-    dispatch({
-      type: 'bookDetail/queryTagBooks',
-      payload: {
-        page: 1,
-        pageSize: 5,
-        id: series.id,
-      },
-    });
-  }
-  const [isFirstQueryTheme, setIsFirstQueryTheme] = useState(true);
-  if (theme && !(theme.id in tagBooks) && isFirstQueryTheme) {
-    setIsFirstQueryTheme(false);
-    dispatch({
-      type: 'bookDetail/queryTagBooks',
-      payload: {
-        page: 1,
-        pageSize: 5,
-        id: theme.id,
-      },
-    });
-  }
   const onReadButtonClick = () => {
     if (book) {
       history.push(`/book/${book.id}/read`);
@@ -153,22 +136,22 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
   };
   const getSameThemeBookList = () => {
     if (!theme) {
-      return [];
+      return undefined;
     }
     if (theme.id in tagBooks) {
-      return tagBooks[theme.id].filter((book: Book) => book.id !== bookDetail.id);
+      return tagBooks[theme.id].filter((book: Book) => book.id !== 999);
     } else {
-      return [];
+      return undefined
     }
   };
   const getSameSeriesBookList = () => {
     if (!series) {
-      return [];
+      return undefined
     }
     if (series.id in tagBooks) {
-      return tagBooks[series.id].filter((book: Book) => book.id !== bookDetail.id);
+      return tagBooks[series.id].filter((book: Book) => book.id !== 9999);
     } else {
-      return [];
+      return undefined;
     }
   };
   if (isWidthDown('md', width)) {
@@ -189,17 +172,15 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
           <Paper square={true} className={classes.mainContent}>
             <div className={classes.contentHeader}>
               <Box boxShadow={1} className={classes.coverWarp}>
-                {
-                  book?.cover &&
-                  <ImageLoader className={classes.cover} url={book.cover}/>
-                }
+                {loadingBook ? <Skeleton variant={'rect'} width={200} height={300}/> :
+                  <ImageLoader className={classes.cover} url={book?.cover} loadingWidth={200} loadingHeight={300}/>}
               </Box>
               <div className={classes.headerInfoContainer}>
                 <Box className={classes.title}>
-                  {book?.name || '未知'}
+                  {loadingBook ? <div><Skeleton variant={'text'}/><Skeleton variant={'text'}/></div> : book?.name}
                 </Box>
                 <Box fontWeight="fontWeightLight" fontSize="subtitle.fontSize">
-                  {series?.name || ''}
+                  {loadingBook ? <Skeleton variant={'text'}/> : series?.name}
                 </Box>
 
 
@@ -276,9 +257,24 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
           </Paper>
         </div>
         <div className={classes.right}>
-          {getSameThemeBookList().length !== 0 &&
-          <SideBooks onSeeMoreClick={onSeeMoreThemeClick} title={'相同主题'} tag={theme} books={getSameThemeBookList()}/>}
-          <SideBooks onSeeMoreClick={onSeeMoreSeriesClick} title={'相同系列'} tag={series} books={getSameSeriesBookList()}/>
+          <div className={classes.sideContainer}>
+            <SideBooks
+              onSeeMoreClick={onSeeMoreThemeClick}
+              title={'相同主题'}
+              tag={theme}
+              books={getSameThemeBookList()}
+              loading={getBooleanWithDefault(loading.effects['bookDetail/queryRelateTheme'], true)}
+            />
+          </div>
+          <div className={classes.sideContainer}>
+            <SideBooks
+              onSeeMoreClick={onSeeMoreSeriesClick}
+              title={'相同系列'}
+              tag={series}
+              books={getSameSeriesBookList()}
+              loading={getBooleanWithDefault(loading.effects['bookDetail/queryRelateSeries'], true)}
+            />
+          </div>
         </div>
       </div>
     );
@@ -286,4 +282,8 @@ function BookDetailPage({ bookDetail, dispatch, width, user }: BookDetailPropsTy
 
 }
 
-export default connect(({ bookDetail, user }: ConnectType) => ({ bookDetail, user }))(withWidth()(BookDetailPage));
+export default connect(({ bookDetail, user, loading }: ConnectType) => ({
+  bookDetail,
+  user,
+  loading,
+}))(withWidth()(BookDetailPage));

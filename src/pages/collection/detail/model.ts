@@ -3,7 +3,7 @@ import { Reducer } from 'redux';
 import { ConnectType } from '@/global/connect';
 import { Book, queryBooks } from '@/services/book';
 import { ListQueryContainer } from '@/services/base';
-import { getCoverThumbnailURL, getImageURL } from '@/util/image';
+import { getCoverThumbnailURL } from '@/util/image';
 import { deleteBookFromCollection } from '@/services/collection';
 
 const { pathToRegexp } = require("path-to-regexp");

@@ -1,7 +1,7 @@
 import { Grid, Typography } from '@material-ui/core';
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import BookCard from '@/components/BookCard';
+import BookCard, { BookCardAction } from '@/components/BookCard';
 import { Book } from '@/services/book';
 
 const useStyles = makeStyles({
@@ -15,9 +15,10 @@ interface BookCollectionPropsType {
   books: Book[]
   loading?: boolean
   loadingCardCount?:number
+  bookCardMenuAction?:BookCardAction[]
 }
 
-export default function BookCollection({ title, books,loading = false,loadingCardCount = 6 }: BookCollectionPropsType) {
+export default function BookCollection({ title, books,loading = false,loadingCardCount = 6,bookCardMenuAction }: BookCollectionPropsType) {
   const classes = useStyles();
   const renderItems = () => {
     if (loading){
@@ -34,6 +35,7 @@ export default function BookCollection({ title, books,loading = false,loadingCar
         <BookCard
           book={book}
           loading={loading}
+          menuAction={bookCardMenuAction}
         />
       </Grid>
     ));

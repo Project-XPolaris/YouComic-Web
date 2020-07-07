@@ -20,8 +20,9 @@ import ApplicationDrawerCollection from '@/layouts/components/ApplicationDrawer/
 import AppsIcon from '@material-ui/icons/Apps';
 // @ts-ignore
 import isMobile from 'ismobilejs';
-import {  history } from '@@/core/umiExports';
-import {useIntl} from '@@/plugin-locale/localeExports'
+import { history } from '@@/core/umiExports';
+import { useIntl } from '@@/plugin-locale/localeExports';
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({

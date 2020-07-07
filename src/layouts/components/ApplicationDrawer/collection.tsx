@@ -20,7 +20,6 @@ import {
 import { Collection } from '@/services/collection';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import DeleteIcon from '@material-ui/icons/Delete';
 import { Controller, useForm } from 'react-hook-form';
 import AddIcon from '@material-ui/icons/Add';
 import { UserStateType } from '@/models/user';
@@ -50,7 +49,7 @@ export default function ApplicationDrawerCollection(
   const [collectionActionId, setCollectionActionId] = useState<null | number>(null);
   const [deleteCollectionDialogOpen, setDeleteCollectionDialogOpen] = useState<boolean>(false);
   const [createCollectionDialogOpen, setCreateCollectionDialogOpen] = useState(false);
-  const { ownCollections, followCollections } = user;
+  const { ownCollections } = user;
   const { handleSubmit, control } = useForm();
   const onSubmit = ({ name }: any) => {
     dispatch({
@@ -172,33 +171,33 @@ export default function ApplicationDrawerCollection(
       </ListItem>
     );
   }) : [];
-  const followCollectionNavigationItems = followCollections ? followCollections.map((collection: Collection) => {
-    const onNavigationItemClick = () => {
-      switchCollection(collection.id, collection.name);
-    };
-    const onActionClick = () => {
-      setCollectionActionId(collection.id);
-      setDeleteCollectionDialogOpen(true);
-    };
-    return (
-      <ListItem
-        button={true}
-        onClick={onNavigationItemClick}
-        key={collection.id}
-        selected={location.pathname === `/collection/${collection.id}`}
-      >
-        <ListItemIcon>
-          <FavoriteIcon/>
-        </ListItemIcon>
-        <ListItemText primary={collection.name}/>
-        <ListItemSecondaryAction>
-          <IconButton edge="end" aria-label="delete" size={'small'} onClick={onActionClick}>
-            <DeleteIcon/>
-          </IconButton>
-        </ListItemSecondaryAction>
-      </ListItem>
-    );
-  }) : [];
+  // const followCollectionNavigationItems = followCollections ? followCollections.map((collection: Collection) => {
+  //   const onNavigationItemClick = () => {
+  //     switchCollection(collection.id, collection.name);
+  //   };
+  //   const onActionClick = () => {
+  //     setCollectionActionId(collection.id);
+  //     setDeleteCollectionDialogOpen(true);
+  //   };
+  //   return (
+  //     <ListItem
+  //       button={true}
+  //       onClick={onNavigationItemClick}
+  //       key={collection.id}
+  //       selected={location.pathname === `/collection/${collection.id}`}
+  //     >
+  //       <ListItemIcon>
+  //         <FavoriteIcon/>
+  //       </ListItemIcon>
+  //       <ListItemText primary={collection.name}/>
+  //       <ListItemSecondaryAction>
+  //         <IconButton edge="end" aria-label="delete" size={'small'} onClick={onActionClick}>
+  //           <DeleteIcon/>
+  //         </IconButton>
+  //       </ListItemSecondaryAction>
+  //     </ListItem>
+  //   );
+  // }) : [];
   const onManageCollectionsClick = () => {
     setCreateCollectionDialogOpen(true);
   };
@@ -215,7 +214,7 @@ export default function ApplicationDrawerCollection(
         <DialogTitle id="form-dialog-title">创建新的收藏夹</DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Controller as={<TextField style={{ width: 500 }}/>} name="name" control={control} defaultValue=""/>
+            <Controller as={<TextField variant={'outlined'} style={{ width: 500 }} label="收藏夹名称"/>}  name="name" control={control} defaultValue=""/>
             <DialogActions>
               <Button onClick={onCreateCollectionDialogClose} color="primary">
                 取消

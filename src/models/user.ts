@@ -5,7 +5,7 @@ import { ConnectType } from '@/global/connect';
 import { getUser, User as UserModel } from '@/services/user';
 import { ListQueryContainer } from '@/services/base';
 import {
-  Collection,
+  Collection, createCollection,
   deleteCollection,
   queryCollections,
   removeUserFromCollection,
@@ -99,7 +99,7 @@ const User: UserType = {
       });
     },
     * createCollection({ payload: { name } }, { call, put, select }) {
-      // const createCollectionResponse = yield call(createCollection, { name });
+      yield call(createCollection, { name });
       yield put({
         type: 'refreshUserCollections',
       });

@@ -9,20 +9,20 @@ interface BookRowCollectionPropsType {
   title: string
   books?: Book[]
   onShowMore?: () => void
-  loading?:boolean
-  loadingCardCount?:number
+  loading?: boolean
+  loadingCardCount?: number
 }
 
 
-export default function BookRowCollection({ title, books, onShowMore,loading=false,loadingCardCount = 5 }: BookRowCollectionPropsType) {
+export default function BookRowCollection({ title, books, onShowMore, loading = false, loadingCardCount = 5 }: BookRowCollectionPropsType) {
   const classes = useStyles();
   const renderItems = () => {
-    if (loading || !books){
-      return [...Array(loadingCardCount).keys() ].map(idx => (
+    if (loading || !books) {
+      return [...Array(loadingCardCount).keys()].map(idx => (
         <Grid item={true} key={idx} style={{ padding: 8 }}>
           <BookCard loading={loading}/>
         </Grid>
-      ))
+      ));
     }
     return books.map((book: Book) => {
       return (
@@ -31,7 +31,7 @@ export default function BookRowCollection({ title, books, onShowMore,loading=fal
         </Grid>
       );
     });
-  }
+  };
   return (
     <div className={classes.main}>
       <div className={classes.header}>

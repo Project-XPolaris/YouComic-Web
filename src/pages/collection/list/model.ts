@@ -1,4 +1,4 @@
-import { Effect, Subscription } from 'dva';
+import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { Collection, queryCollections } from '@/services/collection';
 import { ConnectType } from '@/global/connect';

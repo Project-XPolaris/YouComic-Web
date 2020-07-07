@@ -4,7 +4,8 @@ import { Theme } from '@material-ui/core';
 const useStyles = makeStyles((theme:Theme) => ({
   main: {
     maxWidth:theme.spacing(20),
-    borderRadius:2
+    borderRadius:2,
+    position:'relative'
   },
   cover:{
     width:160,
@@ -44,6 +45,15 @@ const useStyles = makeStyles((theme:Theme) => ({
   link:{
     color:"#333"
 
+  },
+  menuButton:{
+    position:'absolute',
+    top:4,
+    right:4,
+zIndex:10
+  },
+  menuIcon:{
+    color:"#FFF"
   }
 }));
 

@@ -1,102 +1,43 @@
 import React, { useState } from 'react';
-import { makeStyles, Theme } from '@material-ui/core/styles';
 import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
 import { CollectionDetailModelStateType } from '@/pages/collection/detail/model';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid } from '@material-ui/core';
-import { getBookTagInfo } from '@/util/book';
-import { Book } from '@/services/book';
-import CollectionBookCard from '@/pages/collection/detail/components/CollectionBookCard';
-import Pagination from '@/layouts/components/Pagination';
+import { Button, Dialog, DialogActions, DialogTitle } from '@material-ui/core';
 import useStyles from '@/pages/collection/detail/style';
 import { LayoutModelStateType } from '@/models/layout';
-
-
+import MaterialPagination from '@material-ui/lab/Pagination';
+import BookCollection from '@/layouts/components/BookCollection';
+import { getBooleanWithDefault } from '@/util/function';
+import { Loading } from '@@/plugin-dva/connect';
+import { BookCardAction } from '@/components/BookCard';
 
 
 interface CollectionDetailPropsType {
   dispatch: Dispatch,
   collectionDetail: CollectionDetailModelStateType,
   onDelete: (id: number) => void
-  layout:LayoutModelStateType
+  layout: LayoutModelStateType
+  loading: Loading
 }
 
-function CollectionDetail({ dispatch, collectionDetail ,layout}: CollectionDetailPropsType) {
+function CollectionDetail({ dispatch, collectionDetail, layout, loading }: CollectionDetailPropsType) {
   const classes = useStyles();
-  const {isDrawerOpen} = layout;
   const [actionBookId, setActonBookId] = useState<number | undefined>(undefined);
   const [isDeleteDialogShow, setIsDeleteDialogShow] = useState<boolean>(false);
   const onBookDelete = (id: number) => {
     setActonBookId(id);
     setIsDeleteDialogShow(true);
   };
-  const renderBooks = () => {
-    const { books } = collectionDetail;
-    if (books) {
-      return books.map((book: Book) => {
-        const { series, author, theme } = getBookTagInfo(book);
-        return (
-          <Grid item={true} key={book.id} xs={6} sm={isDrawerOpen?4:3} md={isDrawerOpen?4:3} lg={3} xl={2}>
-            <CollectionBookCard
-              onDelete={onBookDelete}
-              id={book.id}
-              title={book.name}
-              link={`/book/${book.id}`}
-              cover={book.cover}
-              author={{
-                text: author?.name,
-                link: author ? `/tag/${author.id}` : undefined,
-              }}
-              series={{
-                text: series?.name,
-                link: series ? `/tag/${series.id}` : undefined,
-              }}
-              theme={{
-                text: theme?.name,
-                link: theme ? `/tag/${theme.id}` : undefined,
-              }}
-            />
-          </Grid>
-        );
-      });
-    } else {
-      return undefined;
-    }
-  };
-  const onNextPage = () => {
+  const onPaginationChange = (_: any, page = collectionDetail.page) => (pageSize = collectionDetail.pageSize) => {
     dispatch({
-      type: 'collectionDetail/setPage',
+      type: 'tagDetail/setPage',
       payload: {
-        page: collectionDetail.page + 1,
-        pageSize: collectionDetail.pageSize,
+        page,
+        pageSize,
       },
     });
     dispatch({
-      type: 'collectionDetail/querySummaryBooks',
-    });
-  };
-  const onPreviousPage = () => {
-    dispatch({
-      type: 'collectionDetail/setPage',
-      payload: {
-        page: collectionDetail.page - 1,
-        pageSize: collectionDetail.pageSize,
-      },
-    });
-    dispatch({
-      type: 'collectionDetail/querySummaryBooks',
-    });
-  };
-  const onSelectPage = (page: number) => {
-    dispatch({
-      type: 'collectionDetail/setPage',
-      payload: {
-        page: page,
-        pageSize: collectionDetail.pageSize,
-      },
-    });
-    dispatch({
-      type: 'collectionDetail/querySummaryBooks',
+      type: 'tagDetail/queryBooks',
     });
   };
   const onDeleteDialogCancel = () => {
@@ -112,6 +53,13 @@ function CollectionDetail({ dispatch, collectionDetail ,layout}: CollectionDetai
     });
     setIsDeleteDialogShow(false);
   };
+  const bookCardMenuActions : Array<BookCardAction>  = [
+    {
+      key:"delete",
+      onAction:book => onBookDelete(book.id),
+      title:book => {return "删除"}
+    }
+  ]
   return (
     <div className={classes.main}>
       <Dialog
@@ -130,21 +78,28 @@ function CollectionDetail({ dispatch, collectionDetail ,layout}: CollectionDetai
           </Button>
         </DialogActions>
       </Dialog>
-      <Grid container={true} spacing={4}>
-        {renderBooks()}
-      </Grid>
+      <BookCollection
+        books={collectionDetail?.books || []}
+        title={'收藏夹'}
+        loadingCardCount={32}
+        loading={getBooleanWithDefault(loading.effects['collectionDetail/queryBooks'], true)}
+        bookCardMenuAction={bookCardMenuActions}
+      />
       <div className={classes.paginationWrap}>
-        <Pagination
-          count={collectionDetail.count}
+        <MaterialPagination
+
+          count={Math.ceil(collectionDetail.count / collectionDetail.pageSize)}
           page={collectionDetail.page}
-          pageSize={collectionDetail.pageSize}
-          onNextPage={onNextPage}
-          onPreviousPage={onPreviousPage}
-          onSelectPage={onSelectPage}
+          onChange={onPaginationChange}
+          color={'primary'}
         />
       </div>
     </div>
   );
 }
 
-export default connect(({ collectionDetail ,layout}: ConnectType) => ({ collectionDetail,layout }))(CollectionDetail);
+export default connect(({ collectionDetail, layout, loading }: ConnectType) => ({
+  collectionDetail,
+  layout,
+  loading,
+}))(CollectionDetail);

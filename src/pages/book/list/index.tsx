@@ -6,10 +6,11 @@ import BoolListMobilePage from '@/pages/book/list/mobile';
 import { updateQueryParamAndReplaceURL } from '@/util/url';
 import { Dispatch, Loading } from '@@/plugin-dva/connect';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { isWidthDown, withWidth } from '@material-ui/core';
+import { Card, isWidthDown, Paper, withWidth } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 import React from 'react';
 import { connect } from '@@/plugin-dva/exports';
+import BookListTool from '@/layouts/ApplicationLayout/parts/ApplicationHeaderBar/components/BookListTool';
 
 interface BookListPropsType {
   dispatch: Dispatch
@@ -81,6 +82,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: 'end',
     marginTop: 32,
   },
+  bookToolWrap:{
+    marginBottom:theme.spacing(2)
+  }
 }));
 
 function BookListPage({ dispatch, bookList, layout, width, loading }: BookListPropsType) {
@@ -101,6 +105,9 @@ function BookListPage({ dispatch, bookList, layout, width, loading }: BookListPr
   } else {
     return (
       <div className={isDrawerOpen ? classes.mainExpand : classes.main}>
+        <Card className={classes.bookToolWrap}>
+          <BookListTool/>
+        </Card>
         <div className={classes.collectionWrap}>
           <BookCollection title={''} books={books || []} loading={loading.effects['bookList/queryBooks']}/>
           <div className={classes.paginationWrap}>

@@ -2,9 +2,11 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import { Box, Link } from '@material-ui/core';
-import { Tag } from '@/services/tag';
 import ImageLoader from '@/components/ImageLoader';
 import { history } from '@@/core/umiExports';
+import { Book } from '@/services/book';
+import { getBookTagInfo } from '@/util/book';
+import { Skeleton } from '@material-ui/lab';
 
 const useStyles = makeStyles({
   card: {
@@ -33,6 +35,7 @@ const useStyles = makeStyles({
     marginLeft: 16,
     paddingTop: 16,
     paddingRight: 16,
+    flexGrow: 1,
   },
   author: {
     marginTop: 8,
@@ -45,25 +48,18 @@ const useStyles = makeStyles({
 });
 
 interface BookCardPropsType {
-  cover?: string
-  title: string,
-  author?: Tag
-  theme?: Tag,
-  series?: Tag
-  link: string
+  book?: Book,
+  loading?: boolean
 }
 
-export default function BookCard({
-                                   cover,
-                                   title = '未知',
-                                   author,
-                                   theme,
-                                   series,
-                                   link,
-                                 }: BookCardPropsType) {
+export default function BookCard(
+  { book, loading = true }: BookCardPropsType) {
   const classes = useStyles();
+  const { author, theme, series } = getBookTagInfo(book);
   const onCardClick = () => {
-    history.push(link);
+    if (book) {
+      history.push(`/book/${book?.id}`);
+    }
   };
   const onAuthorClick = () => {
     if (author) {
@@ -83,29 +79,26 @@ export default function BookCard({
   return (
     <div className={classes.card}>
       <CardActionArea className={classes.media} onClick={onCardClick}>
-        <ImageLoader className={classes.cover} url={cover}/>
+        <ImageLoader className={classes.cover} url={book?.cover || ''}/>
       </CardActionArea>
       <div className={classes.infoArea}>
         <Box
           className={classes.title}
         >
           <Link onClick={onCardClick} className={classes.textLink}>
-            {title}
+            {loading ? <Skeleton variant="text" animation={'wave'}/> : book?.name}
           </Link>
 
         </Box>
-        {
-          author &&
-          <Box
-            fontWeight="fontWeightBold"
-            fontSize="subtitle2.fontSize"
-            className={classes.author}
-          >
-            <Link onClick={onAuthorClick} className={classes.textLink}>
-              {author.name}
-            </Link>
-          </Box>
-        }
+        <Box
+          fontWeight="fontWeightBold"
+          fontSize="subtitle2.fontSize"
+          className={classes.author}
+        >
+          <Link onClick={onAuthorClick} className={classes.textLink}>
+            {loading ? <Skeleton variant="text" animation={'wave'} width={120}/> : author.name}
+          </Link>
+        </Box>
         {
           theme &&
           <Box

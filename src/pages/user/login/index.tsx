@@ -7,6 +7,7 @@ import { ConnectType } from '@/global/connect';
 import { LoginModelStateType } from '@/pages/user/login/model';
 import LoginMobilePage from '@/pages/user/login/mobile';
 import ThemeLayout from '@/layouts/ThemeLayout';
+import StatusBar from '@/layouts/ApplicationLayout/parts/ApplicationHeaderBar/parts/StatusBar';
 
 
 const useStyles = makeStyles({
@@ -53,6 +54,10 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  statusBarWrap:{
+    position:"fixed",
+    width:"100%"
+  }
 });
 
 interface LoginPagePropsType {
@@ -72,6 +77,10 @@ function LoginPage({ dispatch,width }: LoginPagePropsType) {
   }
   return (
     <ThemeLayout>
+      <div className={classes.statusBarWrap}>
+        <StatusBar />
+      </div>
+
     <div className={classes.main}>
       <div className={classes.gapArea}/>
       <div>

@@ -13,5 +13,6 @@ const ApplicationConfig = {
     collectionUsers:'/collection/:id/users',
     tags:'/tags'
   },
+  useElectron:false
 };
 export default ApplicationConfig;

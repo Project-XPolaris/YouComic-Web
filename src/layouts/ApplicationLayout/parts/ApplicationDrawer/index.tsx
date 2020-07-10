@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, Toolbar, withWidth } from '@material-ui/core';
+import {
+  Drawer,
+  isWidthDown, isWidthUp,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  makeStyles,
+  Toolbar,
+  withWidth,
+} from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -27,7 +37,10 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    paddingTop: ApplicationConfig.useElectron ? theme.spacing(4) : theme.spacing(4),
+    [theme.breakpoints.up('md')]: {
+      paddingTop: ApplicationConfig.useElectron ? theme.spacing(4) : 0,
+    },
+
   },
   drawerHeader: {},
 
@@ -60,7 +73,6 @@ const ApplicationDrawer = ({
                              dispatch,
                              layout,
                              user,
-                             location,
                              width,
                              ...props
                            }: ApplicationDrawerPropsType) => {
@@ -106,7 +118,6 @@ const ApplicationDrawer = ({
           dispatch={dispatch}
           user={user}
           layout={layout}
-          location={location}
         />
       );
     }
@@ -170,6 +181,14 @@ const ApplicationDrawer = ({
       );
     }
   };
+  const onCloseDrawer = () => {
+    dispatch({
+      type: 'layout/setDrawerOpen',
+      payload: {
+        open: false,
+      },
+    });
+  };
   return (
     <div>
       <Drawer
@@ -177,10 +196,12 @@ const ApplicationDrawer = ({
         classes={{
           paper: classes.drawerPaper,
         }}
-        variant="permanent"
+        onClose={onCloseDrawer}
+        open={layout.isDrawerOpen}
+        variant={isWidthDown('md', width) ? 'temporary' : 'permanent'}
       >
+        {isWidthUp("md",width) && <Toolbar/>}
 
-        <Toolbar/>
         <div className={classes.drawerHeader}>
           {renderDrawerHeader()}
         </div>

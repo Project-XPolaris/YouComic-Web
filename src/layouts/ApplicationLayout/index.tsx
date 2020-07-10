@@ -29,17 +29,20 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100vh',
       overflow: 'scroll',
       overflowX: 'hidden',
-      '&::-webkit-scrollbar': {
-        width: 12,
-        backgroundColor: '#dbdbdb',
-        height: 12,
-      },
-      '&::-webkit-scrollbar-thumb': {
-        backgroundColor: '#2196f3',
-        '&:hover': {
+      [theme.breakpoints.up('md')]: {
+        '&::-webkit-scrollbar': {
           width: 12,
+          backgroundColor: '#dbdbdb',
+          height: 12,
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: '#2196f3',
+          '&:hover': {
+            width: 12,
+          },
         },
       },
+
     },
 
   }),

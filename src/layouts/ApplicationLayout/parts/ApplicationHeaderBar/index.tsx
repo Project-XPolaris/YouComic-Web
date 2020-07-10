@@ -5,7 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import { Avatar, withWidth } from '@material-ui/core';
+import { Avatar, isWidthDown, withWidth } from '@material-ui/core';
 import { UserStateType } from '@/models/user';
 import UserCard from '@/layouts/components/UserCardPopover/UserCard';
 import { connect, Dispatch } from 'dva';
@@ -14,9 +14,11 @@ import SearchBooksToolBar from '@/layouts/ApplicationLayout/parts/ApplicationHea
 import SearchTagsToolBar from '@/layouts/ApplicationLayout/parts/ApplicationHeaderBar/components/SearchTagsToolBar';
 import LocalSelect from '@/layouts/ApplicationLayout/parts/ApplicationHeaderBar/components/LocalSelect';
 import { ConnectType } from '@/global/connect';
-import { history } from '@@/core/umiExports';
+import { history, LayoutModelStateType } from '@@/core/umiExports';
 import ApplicationConfig from '@/config';
 import StatusBar from '@/layouts/ApplicationLayout/parts/ApplicationHeaderBar/parts/StatusBar';
+import MenuIcon from '@material-ui/icons/Menu';
+import BookListTool from '@/layouts/ApplicationLayout/parts/ApplicationHeaderBar/components/BookListTool';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,17 +37,21 @@ const useStyles = makeStyles((theme: Theme) =>
       color: '#FFF',
       backgroundColor: theme.palette.primary.dark,
     },
-
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
   }),
 );
 
 interface ApplicationHeaderBar {
   dispatch: Dispatch,
   user: UserStateType,
+  layout:LayoutModelStateType
+  width:any
 }
 
 const ApplicationHeaderBar = (
-  { user, dispatch }: ApplicationHeaderBar,
+  { user, dispatch,layout,width }: ApplicationHeaderBar,
 ) => {
   const classes = useStyles();
   const { nickname } = user;
@@ -67,7 +73,14 @@ const ApplicationHeaderBar = (
     history.push('/user/login');
   };
 
-
+  const switchDrawer = () => {
+    dispatch({
+      type: 'layout/setDrawerOpen',
+      payload: {
+        open: !layout.isDrawerOpen,
+      },
+    });
+  };
   const renderAppBar = () => {
     return (
       <AppBar elevation={1}>
@@ -77,6 +90,16 @@ const ApplicationHeaderBar = (
 
         }
         <Toolbar>
+          {isWidthDown("md",width) &&  <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="menu"
+            onClick={switchDrawer}
+          >
+            <MenuIcon/>
+          </IconButton>}
+
           <Typography variant="h6" className={classes.title}>
             You Comic {ApplicationConfig.useElectron && 'Desktop'}
           </Typography>
@@ -101,7 +124,7 @@ const ApplicationHeaderBar = (
           </IconButton> : <Button color="inherit" onClick={onLoginClick}>Login</Button>
           }
         </Toolbar>
-        {/*{history.location.pathname === '/books' && <BookListTool/>}*/}
+        {history.location.pathname === '/books' && isWidthDown("md",width) && <BookListTool/>}
         {history.location.pathname.match(/\/search\/.*?\/books$/) && <SearchBooksToolBar/>}
         {history.location.pathname.match(/\/search\/.*?\/tags$/) && <SearchTagsToolBar/>}
       </AppBar>

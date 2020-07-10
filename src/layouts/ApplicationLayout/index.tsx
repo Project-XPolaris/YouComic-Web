@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
           height: 12,
         },
         '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#2196f3',
+          backgroundColor: '#9e9e9e',
           '&:hover': {
             width: 12,
           },

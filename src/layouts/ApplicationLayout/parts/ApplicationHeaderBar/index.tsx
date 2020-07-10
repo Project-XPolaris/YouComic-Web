@@ -81,6 +81,7 @@ const ApplicationHeaderBar = (
       },
     });
   };
+
   const renderAppBar = () => {
     return (
       <AppBar elevation={1}>

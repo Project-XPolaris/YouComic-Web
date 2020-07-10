@@ -9,7 +9,7 @@ const { pathToRegexp } = require("path-to-regexp");
 
 export interface SearchTagsModelStateType {
   tags?: Tag[]
-  filter: {}
+  filter: any
   page: number
   pageSize: number
   count: number

@@ -15,7 +15,7 @@ export default {
     },
     {
       path: '/',
-      component: '../layouts/AuthorityLayout/index',
+      component: '../layouts/index',
       routes: [
         { path: '/', component: '../pages/home/index' },
         { path: '/books', component: '../pages/book/list/index' },

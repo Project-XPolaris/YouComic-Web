@@ -21,6 +21,7 @@
     "@material-ui/icons": "^4.5.1",
     "@material-ui/lab": "^4.0.0-alpha.39",
     "@material-ui/pickers": "^3.2.9",
+    "@types/electron": "^1.6.10",
     "@types/raf": "^3.4.0",
     "@types/randomcolor": "^0.5.3",
     "@types/react-infinite-scroller": "^1.2.1",

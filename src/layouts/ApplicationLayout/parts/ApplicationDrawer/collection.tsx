@@ -27,23 +27,16 @@ import { LayoutModelStateType } from '@/models/layout';
 import { Dispatch } from 'dva';
 import { history } from '@@/core/umiExports';
 
-// const useStyles = makeStyles({
-//   main: {},
-// });
-
 interface ApplicationDrawerCollectionPropsType {
   user: UserStateType,
   layout: LayoutModelStateType,
   dispatch: Dispatch,
-  location: any
 }
 
 export default function ApplicationDrawerCollection(
   {
     user,
-    layout,
     dispatch,
-    location,
   }: ApplicationDrawerCollectionPropsType) {
   const [collectionActionAnchor, setCollectionActionAnchor] = useState<null | HTMLElement>(null);
   const [collectionActionId, setCollectionActionId] = useState<null | number>(null);
@@ -63,7 +56,7 @@ export default function ApplicationDrawerCollection(
   //collection drawer switch
   const switchCollection = (id: number, name: string) => {
     const toURL = `/collection/${id}`;
-    if (location.pathname === toURL) {
+    if (history.location.pathname === toURL) {
       return;
     }
     dispatch({
@@ -73,7 +66,7 @@ export default function ApplicationDrawerCollection(
       },
     });
     const matchRegex = RegExp('^/collection/.*?$');
-    if (matchRegex.test(location.pathname)) {
+    if (matchRegex.test(history.location.pathname)) {
       history.replace(toURL);
     } else {
       history.push(toURL);
@@ -157,7 +150,7 @@ export default function ApplicationDrawerCollection(
         button={true}
         onClick={onNavigationItemClick}
         key={collection.id}
-        selected={location.pathname === `/collection/${collection.id}`}
+        selected={history.location.pathname === `/collection/${collection.id}`}
       >
         <ListItemIcon>
           <FavoriteIcon/>
@@ -171,33 +164,6 @@ export default function ApplicationDrawerCollection(
       </ListItem>
     );
   }) : [];
-  // const followCollectionNavigationItems = followCollections ? followCollections.map((collection: Collection) => {
-  //   const onNavigationItemClick = () => {
-  //     switchCollection(collection.id, collection.name);
-  //   };
-  //   const onActionClick = () => {
-  //     setCollectionActionId(collection.id);
-  //     setDeleteCollectionDialogOpen(true);
-  //   };
-  //   return (
-  //     <ListItem
-  //       button={true}
-  //       onClick={onNavigationItemClick}
-  //       key={collection.id}
-  //       selected={location.pathname === `/collection/${collection.id}`}
-  //     >
-  //       <ListItemIcon>
-  //         <FavoriteIcon/>
-  //       </ListItemIcon>
-  //       <ListItemText primary={collection.name}/>
-  //       <ListItemSecondaryAction>
-  //         <IconButton edge="end" aria-label="delete" size={'small'} onClick={onActionClick}>
-  //           <DeleteIcon/>
-  //         </IconButton>
-  //       </ListItemSecondaryAction>
-  //     </ListItem>
-  //   );
-  // }) : [];
   const onManageCollectionsClick = () => {
     setCreateCollectionDialogOpen(true);
   };
@@ -245,7 +211,7 @@ export default function ApplicationDrawerCollection(
       {renderCreateCollectionDialog()}
       {renderMenu()}
       {renderDeleteConfirmDialog()}
-      <ListItem button={true} onClick={onManageCollectionsClick} selected={location.pathname === '/my/collections'}>
+      <ListItem button={true} onClick={onManageCollectionsClick} selected={history.location.pathname === '/my/collections'}>
         <ListItemIcon>
           <AddIcon/>
         </ListItemIcon>
@@ -253,9 +219,6 @@ export default function ApplicationDrawerCollection(
       </ListItem>
       <ListSubheader style={{ backgroundColor: '#FFF' }}>我创建的</ListSubheader>
       {ownCollectionNavigationItems}
-      {/*<ListSubheader style={{ backgroundColor: '#FFF' }}>我关注的</ListSubheader>*/}
-      {/*{followCollectionNavigationItems}*/}
-      {/*<Divider/>*/}
     </List>
   );
 }

@@ -1,8 +1,6 @@
 import React from 'react';
-import ApplicationHeaderBar from '@/layouts/components/ApplicationHeaderBar';
-import { createMuiTheme, createStyles, makeStyles, Theme, ThemeProvider } from '@material-ui/core/styles';
-import { blue, orange } from '@material-ui/core/colors';
-import ApplicationFooter from '@/layouts/components/ApplicationFooter';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import ApplicationFooter from '@/layouts/ApplicationLayout/parts/ApplicationFooter';
 import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
 import { LayoutModelStateType } from '@/models/layout';
@@ -12,7 +10,8 @@ import { UserStateType } from '@/models/user';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import ThemeLayout from '@/layouts/ThemeLayout';
-
+import ApplicationLayout from '@/layouts/ApplicationLayout';
+import { electron } from '@/electron';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -40,32 +39,21 @@ const BasicLayout = ({
                        user,
                        ...props
                      }: LayoutPropsType) => {
-  console.log(props);
-  const classes = useStyles();
   const content = (
     <div>
-      <div className={classes.main}>
+      <div>
         {props.children}
       </div>
       <ApplicationFooter/>
     </div>
   );
-  const switchDrawer = () => {
-    dispatch({
-      type: 'layout/setDrawerOpen',
-      payload: {
-        open: !layout.isDrawerOpen,
-      },
-    });
-  };
-  const { isDrawerOpen } = layout;
+  console.log(electron)
   return (
     <ThemeLayout>
       <MuiPickersUtilsProvider utils={MomentUtils}>
-        <ApplicationHeaderBar
-          child={content}
-          location={location}
-        />
+        <ApplicationLayout>
+          {content}
+        </ApplicationLayout>
       </MuiPickersUtilsProvider>
     </ThemeLayout>
   );

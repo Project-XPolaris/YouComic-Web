@@ -1,14 +1,5 @@
 import * as React from 'react';
-import {
-  Drawer,
-  isWidthDown,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  makeStyles,
-  withWidth,
-} from '@material-ui/core';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, Toolbar, withWidth } from '@material-ui/core';
 import HomeIcon from '@material-ui/icons/Home';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -16,12 +7,13 @@ import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
 import { LayoutModelStateType } from '@/models/layout';
 import { UserStateType } from '@/models/user';
-import ApplicationDrawerCollection from '@/layouts/components/ApplicationDrawer/collection';
+import ApplicationDrawerCollection from '@/layouts/ApplicationLayout/parts/ApplicationDrawer/collection';
 import AppsIcon from '@material-ui/icons/Apps';
 // @ts-ignore
 import isMobile from 'ismobilejs';
 import { history } from '@@/core/umiExports';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import ApplicationConfig from '@/config';
 
 const drawerWidth = 240;
 
@@ -35,8 +27,10 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaper: {
     width: drawerWidth,
+    paddingTop: ApplicationConfig.useElectron ? theme.spacing(4) : theme.spacing(4),
   },
   drawerHeader: {},
+
 }));
 
 export interface ApplicationDrawerPropsType {
@@ -44,8 +38,8 @@ export interface ApplicationDrawerPropsType {
   dispatch: Dispatch
   layout: LayoutModelStateType
   user: UserStateType,
-  location: any,
-  width:any
+  location?: any,
+  width: any
 }
 
 interface DrawerNavigationItem {
@@ -73,7 +67,7 @@ const ApplicationDrawer = ({
   const classes = useStyles();
   const { drawerMode } = layout;
   // @ts-ignore
-  const intl = useIntl()
+  const intl = useIntl();
   const items: DrawerNavigationItem[] = [
     {
       title: intl.formatMessage({ id: 'nav.home' }),
@@ -116,7 +110,7 @@ const ApplicationDrawer = ({
         />
       );
     }
-    return undefined
+    return undefined;
   };
   const renderNavigationItems = () => {
     const navs = items.map(item => {
@@ -124,15 +118,15 @@ const ApplicationDrawer = ({
         return undefined;
       }
       const onNavigationItemClick = () => {
-        if (isMobile(window.navigator.userAgent).any){
+        if (isMobile(window.navigator.userAgent).any) {
           dispatch({
-            type:"layout/setDrawerOpen",
-            payload:{
-              isOpen:false
-            }
-          })
+            type: 'layout/setDrawerOpen',
+            payload: {
+              isOpen: false,
+            },
+          });
         }
-        history.push(item.link)
+        history.push(item.link);
       };
       return (
         <ListItem button={true} onClick={item.onClickItem ? item.onClickItem : onNavigationItemClick} key={item.title}>
@@ -160,9 +154,8 @@ const ApplicationDrawer = ({
     };
     if (drawerMode === 'normal') {
       return (
-        <List>
-          <ListItem/>
-        </List>
+        <>
+        </>
       );
     } else {
       return (
@@ -177,26 +170,17 @@ const ApplicationDrawer = ({
       );
     }
   };
-  const switchDrawer = () => {
-    dispatch({
-      type: 'layout/setDrawerOpen',
-      payload: {
-        open: !layout.isDrawerOpen,
-      },
-    });
-  };
   return (
     <div>
       <Drawer
         className={classes.drawer}
-        variant={isWidthDown('md', width) ? 'temporary' : 'persistent'}
-        anchor="left"
-        open={isOpen}
         classes={{
           paper: classes.drawerPaper,
         }}
-        onClose={isWidthDown('md', width) ? switchDrawer : undefined}
+        variant="permanent"
       >
+
+        <Toolbar/>
         <div className={classes.drawerHeader}>
           {renderDrawerHeader()}
         </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Toolbar } from '@material-ui/core';
 import { connect, Dispatch } from 'dva';
-import ChipGroupFilter, { ChipFilterItem } from '@/layouts/components/ApplicationHeaderBar/components/ChipFilter';
+import ChipGroupFilter, { ChipFilterItem } from '@/layouts/ApplicationLayout/parts/ApplicationHeaderBar/components/ChipFilter';
 import { updateQueryParamAndReplaceURL } from '@/util/url';
 import { ConnectType } from '@/global/connect';
 import { SearchTagsModelStateType } from '@/pages/search/tags/model';

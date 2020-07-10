@@ -58,7 +58,7 @@ const pageListPostProcess: PathNamePostProcess<ListQueryContainer<Page>> = {
 };
 apiRequest.use(async (ctx, next) => {
   if (window.apiurl === undefined) {
-    const json = await request.get('/config.json');
+    const json = await request.get('./config.json');
     window.apiurl = json.apiurl;
   }
   ctx.req.url = window.apiurl + ctx.req.url;

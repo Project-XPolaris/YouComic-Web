@@ -37,5 +37,9 @@
     "src/.umi/*",
     "webpack",
     "jest"
-  ]
+  ],
+  "skipLibCheck": true,
+  "awesomeTypescriptLoaderOptions": {
+    "errorsAsWarnings": true
+  }
 }

@@ -6,6 +6,8 @@ export default {
     antd: true,
     baseNavigator: true,
   },
+  history: { type: 'hash' },
+  publicPath: './',
   routes: [
     {
       path: '/user/login',
@@ -13,7 +15,7 @@ export default {
     },
     {
       path: '/',
-      component: '../layouts/index',
+      component: '../layouts/AuthorityLayout/index',
       routes: [
         { path: '/', component: '../pages/home/index' },
         { path: '/books', component: '../pages/book/list/index' },

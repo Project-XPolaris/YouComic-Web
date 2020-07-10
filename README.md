@@ -26,11 +26,22 @@ YouComic Web是YouComic的网页端，书籍阅读功能.
 - 📱多设备支持
 
 ### 📷Preview
+
+#### Web
 ![](./other/pv_1.png)
 ![](./other/pv_2.png)
 ![](./other/pv_3.png)
 ![](./other/pv_4.png)
 ![](./other/pv_5.png)
+
+#### Desktop
+![](./other/pv_6.png)
+
+### 🔨开发
+
+### 💻Desktop
+
+桌面版正在开发中，需要对一些以前的页面进行针对的优化，可以切换[分支](https://github.com/Project-XPolaris/YouComic-Web/tree/new_layout)查看最新的进度情况。
 
 ### 🔗链接
 - [☁️YouComic Server](https://github.com/Project-XPolaris/YouComic-Server)

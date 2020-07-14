@@ -11,7 +11,7 @@ import { getBooleanWithDefault } from '@/util/function';
 
 const useStyles = makeStyles((theme: Theme) => ({
   main: {
-    paddingTop: theme.spacing(12),
+    paddingTop: theme.spacing(18),
     [theme.breakpoints.only('xs')]: {
       paddingLeft: 12,
       paddingRight: 12,
@@ -79,10 +79,9 @@ interface TagDetailPagePropsType {
 }
 
 
-function TagDetailPage({ tagDetail, layout, dispatch, loading }: TagDetailPagePropsType) {
+function TagDetailPage({ tagDetail,dispatch, loading }: TagDetailPagePropsType) {
   const classes = useStyles();
   const { books, tag } = tagDetail;
-  const { isDrawerOpen } = layout;
   const bookItem = books;
   const onPaginationChange = (_: any, page = tagDetail.page) => (pageSize = tagDetail.pageSize) => {
     dispatch({
@@ -97,7 +96,7 @@ function TagDetailPage({ tagDetail, layout, dispatch, loading }: TagDetailPagePr
     });
   };
   return (
-    <div className={isDrawerOpen ? classes.mainExpand : classes.main}>
+    <div className={classes.main}>
       <BookCollection
         title={tag ? tag.name : '标签'}
         books={bookItem || []}
@@ -117,6 +116,5 @@ function TagDetailPage({ tagDetail, layout, dispatch, loading }: TagDetailPagePr
 
 export default connect(({ tagDetail, layout, loading }: ConnectType) => ({
   tagDetail,
-  layout,
   loading,
 }))(TagDetailPage);

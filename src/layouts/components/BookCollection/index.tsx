@@ -3,6 +3,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import BookCard, { BookCardAction } from '@/components/BookCard';
 import { Book } from '@/services/book';
+import style from './style.less';
 
 const useStyles = makeStyles({
   main: {},
@@ -16,9 +17,10 @@ interface BookCollectionPropsType {
   loading?: boolean
   loadingCardCount?:number
   bookCardMenuAction?:BookCardAction[]
+  titleClassName?:any
 }
 
-export default function BookCollection({ title, books,loading = false,loadingCardCount = 6,bookCardMenuAction }: BookCollectionPropsType) {
+export default function BookCollection({ title, books,loading = false,loadingCardCount = 6,bookCardMenuAction,titleClassName = style.title }: BookCollectionPropsType) {
   const classes = useStyles();
   const renderItems = () => {
     if (loading){
@@ -43,9 +45,12 @@ export default function BookCollection({ title, books,loading = false,loadingCar
 
   return (
     <div className={classes.main}>
-      <Typography variant="h5">
-        {title}
-      </Typography>
+      <div className={titleClassName}>
+        <Typography variant="h5" >
+          {title}
+        </Typography>
+      </div>
+
       <Grid container={true} spacing={1}>
         {renderItems()}
       </Grid>

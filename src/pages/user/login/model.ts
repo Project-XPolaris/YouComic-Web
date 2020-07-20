@@ -1,7 +1,9 @@
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { getAuth, UserAuth } from '@/services/user';
-import { history } from '@@/core/umiExports';
+import { history, Notification } from '@@/core/umiExports';
+import { ApiError } from '@/services/error';
+import { getReasonFromCode } from '@/util/request';
 
 export interface LoginModelStateType {
 }
@@ -24,10 +26,26 @@ const LoginModel: LoginModelType = {
   subscriptions: {},
   effects: {
     * login({ payload: { username, password } }, { call, put }) {
-      console.log(username, password);
-      const authResponse: UserAuth = yield call(getAuth, { username, password });
-      console.log(authResponse);
-      if (authResponse['sign']) {
+      const authResponse: UserAuth | ApiError = yield call(getAuth, { username, password });
+      if ("success" in authResponse && !authResponse.success){
+        const reason = getReasonFromCode(authResponse.code)
+        if (reason){
+          const notification: Notification = {
+            message: reason,
+            options: {
+              variant: 'error',
+            },
+            dismiss: false,
+          };
+          yield put({
+            type: 'notice/addNotification',
+            payload: {
+              notification,
+            },
+          });
+        }
+      }
+      if ("sign" in authResponse) {
         yield put({
           type: 'onLoginSuccess',
           payload: authResponse,

@@ -1,5 +1,4 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import ApplicationFooter from '@/layouts/ApplicationLayout/parts/ApplicationFooter';
 import { connect, Dispatch } from 'dva';
 import { ConnectType } from '@/global/connect';
@@ -9,18 +8,8 @@ import { Breakpoint } from '@material-ui/core/styles/createBreakpoints';
 import { UserStateType } from '@/models/user';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-import ThemeLayout from '@/layouts/ThemeLayout';
 import ApplicationLayout from '@/layouts/ApplicationLayout';
-import { electron } from '@/electron';
 
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    main: {
-      backgroundColor: '#F7F9FA',
-    },
-  }),
-);
 
 interface LayoutPropsType {
   layout: LayoutModelStateType
@@ -47,15 +36,14 @@ const BasicLayout = ({
       <ApplicationFooter/>
     </div>
   );
-  console.log(electron)
   return (
-    <ThemeLayout>
+    <>
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <ApplicationLayout>
           {content}
         </ApplicationLayout>
       </MuiPickersUtilsProvider>
-    </ThemeLayout>
+    </>
   );
 };
 

@@ -9,13 +9,12 @@ const pathToRegexp = require('path-to-regexp');
 
 const errorHandler = function(error: ResponseError) {
   if (error.response) {
-    // The request was made and the server responded with a status code
-    // that falls out of the range of 2xx
     console.log(error.response.status);
     console.log(error.response.headers);
     console.log(error.data);
     console.log(error.request);
   }
+  return error.data
 };
 
 const apiRequest = extend({
@@ -151,3 +150,8 @@ imageRequest.use(async (ctx, next) => {
 });
 
 
+export const getReasonFromCode = (code:string) => {
+  return {
+    "1006":"用户名或密码错误"
+  }[code]
+}

@@ -8,6 +8,7 @@ import { LoginModelStateType } from '@/pages/user/login/model';
 import LoginMobilePage from '@/pages/user/login/mobile';
 import ThemeLayout from '@/layouts/ThemeLayout';
 import StatusBar from '@/layouts/ApplicationLayout/parts/ApplicationHeaderBar/parts/StatusBar';
+import ApplicationConfig from '@/config';
 
 
 const useStyles = makeStyles({
@@ -77,9 +78,13 @@ function LoginPage({ dispatch,width }: LoginPagePropsType) {
   }
   return (
     <ThemeLayout>
-      <div className={classes.statusBarWrap}>
-        <StatusBar />
-      </div>
+      {
+        ApplicationConfig.useElectron &&
+        <div className={classes.statusBarWrap}>
+          <StatusBar />
+        </div>
+      }
+
 
     <div className={classes.main}>
       <div className={classes.gapArea}/>
